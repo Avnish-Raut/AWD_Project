@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  ORG
+  USER
+}
+
+enum RegistrationStatus {
+  CONFIRMED
+  CANCELLED
+}
+
+enum ReportStatus {
+  PENDING
+  IN_PROGRESS
+  DONE
+  FAILED
+}
+
+enum LogLevel {
+  INFO
+  WARN
+  ERROR
+}
+
+model User {
+  user_id       Int       @id @default(autoincrement())
+  username      String    @db.VarChar(50)
+  email         String    @unique @db.VarChar(100)
+  password_hash String    @db.VarChar(255)
+  role          Role      @default(USER)
+  created_at    DateTime  @default(now())
+  deleted_at    DateTime?
+
+  events                Event[]              @relation("OrganizerEvents")
+  registrations         Registration[]
+  reports               Report[]
+  documents             Document[]           @relation("UploaderDocuments")
+  password_reset_tokens PasswordResetToken[]
+  notifications         Notification[]
+  logs                  Log[]
+}
+
+model Event {
+  event_id     Int      @id @default(autoincrement())
+  organizer_id Int
+  title        String   @db.VarChar(100)
+  description  String?
+  event_date   DateTime
+  location     String   @db.VarChar(100)
+  capacity     Int
+  is_published Boolean  @default(false)
+  is_cancelled Boolean  @default(false)
+  created_at   DateTime @default(now())
+
+  organizer     User           @relation("OrganizerEvents", fields: [organizer_id], references: [user_id])
+  registrations Registration[]
+  documents     Document[]
+  reports       Report[]
+}
+
+model Registration {
+  reg_id        Int                @id @default(autoincrement())
+  user_id       Int
+  event_id      Int
+  registered_at DateTime           @default(now())
+  status        RegistrationStatus @default(CONFIRMED)
+
+  user  User  @relation(fields: [user_id], references: [user_id])
+  event Event @relation(fields: [event_id], references: [event_id])
+
+  @@unique([user_id, event_id])
+}
+
+model Document {
+  doc_id       Int      @id @default(autoincrement())
+  event_id     Int
+  uploaded_by  Int
+  file_name    String   @db.VarChar(255)
+  file_path    String   @db.VarChar(500)
+  file_size_kb Int
+  uploaded_at  DateTime @default(now())
+
+  event    Event @relation(fields: [event_id], references: [event_id])
+  uploader User  @relation("UploaderDocuments", fields: [uploaded_by], references: [user_id])
+}
+
+model Report {
+  report_id        Int          @id @default(autoincrement())
+  organizer_id     Int
+  event_id         Int
+  status           ReportStatus @default(PENDING)
+  progress_percent Int          @default(0)
+  result_data      Json?
+  created_at       DateTime     @default(now())
+
+  organizer User  @relation(fields: [organizer_id], references: [user_id])
+  event     Event @relation(fields: [event_id], references: [event_id])
+}
+
+model PasswordResetToken {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  token      String   @unique
+  expires_at DateTime
+  used       Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [user_id])
+}
+
+model Notification {
+  notif_id Int      @id @default(autoincrement())
+  user_id  Int
+  message  String
+  is_read  Boolean  @default(false)
+  sent_at  DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [user_id])
+}
+
+model Log {
+  log_id     Int      @id @default(autoincrement())
+  level      LogLevel
+  message    String
+  user_id    Int?
+  created_at DateTime @default(now())
+
+  user User? @relation(fields: [user_id], references: [user_id])
+}
