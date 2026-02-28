@@ -1,0 +1,24 @@
+# Personal planning notes (not part of the project repo)
+planning/
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# VS Code Clojure extensions (unrelated to this project)
+.clj-kondo/
+.lsp/
+
+# Environment files
+.env
+*.env.local
+
+# Node
+node_modules/
+
+# Build outputs
+dist/
+build/
