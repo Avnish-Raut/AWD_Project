@@ -5,7 +5,12 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
-import { Role } from '@prisma/client';
+
+// Only USER and ORG are self-registerable — ADMIN is assigned manually
+export enum RegisterRole {
+  USER = 'USER',
+  ORG = 'ORG',
+}
 
 export class RegisterDto {
   @IsString()
@@ -18,6 +23,6 @@ export class RegisterDto {
   password: string;
 
   @IsOptional()
-  @IsEnum(Role)
-  role?: Role;
+  @IsEnum(RegisterRole)
+  role?: RegisterRole;
 }
