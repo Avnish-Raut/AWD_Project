@@ -7,6 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
+import { Role } from '@prisma/client';
 import { LoginDto } from './dto/login.dto';
 
 @Injectable()
@@ -30,7 +31,7 @@ export class AuthService {
         username: dto.username,
         email: dto.email,
         password_hash: hash,
-        role: dto.role ?? 'USER',
+        role: (dto.role as unknown as Role) ?? Role.USER,
       },
     });
 
