@@ -329,3 +329,6 @@ planning/
 # VS Code Clojure extensions (unrelated to this project)
 .clj-kondo/
 .lsp/
+
+#uploaded files
+backend/uploads/
