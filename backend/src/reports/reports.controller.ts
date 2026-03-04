@@ -15,7 +15,7 @@ export class ReportController {
    * R18 – Generate Event Report
    * Only Organizer can request report for their own event
    */
-  @Post('generate/report')
+  @Post(':id/report/generate')
   @Roles(Role.ORG)
   create(@Param('id') id: string, @Req() req) {
     return this.service.createReport(+id, req.user.sub);
