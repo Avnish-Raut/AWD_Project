@@ -12,6 +12,7 @@ import { ReportsModule } from './reports/reports.module';
 import { LogsModule } from './logs/logs.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { MailService } from './mail/mail.service';
 
 @Module({
   imports: [
@@ -28,6 +29,6 @@ import { NotificationsModule } from './notifications/notifications.module';
     NotificationsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, MailService],
 })
 export class AppModule {}

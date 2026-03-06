@@ -8,6 +8,7 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RolesGuard } from './guards/roles.guard';
         signOptions: { expiresIn: '1d' },
       }),
     }),
+    MailModule,
   ],
   providers: [AuthService, JwtStrategy, JwtAuthGuard, RolesGuard],
   controllers: [AuthController],
