@@ -27,8 +27,13 @@ export class EventsController {
   constructor(private eventsService: EventsService) {}
 
   @Get()
-  findAll(@Query('search') search?: string) {
-    return this.eventsService.findAllPublished(search);
+  findAll(
+    @Query('search') search?: string,
+    @Query('location') location?: string,
+    @Query('date_from') dateFrom?: string,
+    @Query('date_to') dateTo?: string,
+  ) {
+    return this.eventsService.findAllPublished({ search, location, dateFrom, dateTo });
   }
 
   @Get(':id')

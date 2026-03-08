@@ -27,8 +27,14 @@ export class EventsService {
     });
   }
 
-  // R13 — List all published events (any user), with optional search (R33)
-  async findAllPublished(search?: string) {
+  // R13 + R33 — List all published events with optional search, location, and date range filters
+  async findAllPublished(filters?: {
+    search?: string;
+    location?: string;
+    dateFrom?: string;
+    dateTo?: string;
+  }) {
+    const { search, location, dateFrom, dateTo } = filters ?? {};
     return this.prisma.event.findMany({
       where: {
         is_published: true,
@@ -40,6 +46,17 @@ export class EventsService {
                 { description: { contains: search, mode: 'insensitive' } },
                 { location: { contains: search, mode: 'insensitive' } },
               ],
+            }
+          : {}),
+        ...(location
+          ? { location: { contains: location, mode: 'insensitive' } }
+          : {}),
+        ...(dateFrom || dateTo
+          ? {
+              event_date: {
+                ...(dateFrom ? { gte: new Date(dateFrom) } : {}),
+                ...(dateTo ? { lte: new Date(dateTo) } : {}),
+              },
             }
           : {}),
       },
