@@ -16,6 +16,7 @@ interface LoginDto {
 
 interface LoginResponse {
   access_token: string;
+  user: { id: number; username: string; role: string };
 }
 
 @Injectable({
@@ -23,6 +24,7 @@ interface LoginResponse {
 })
 export class AuthService {
   private apiUrl = 'http://localhost:3000/api/auth';
+  private _currentUser: { id: number; username: string; role: string } | null = null;
 
   constructor(private http: HttpClient) {}
 
@@ -33,14 +35,15 @@ export class AuthService {
   login(dto: LoginDto): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, dto).pipe(
       tap((res) => {
-        // Save JWT in localStorage
         localStorage.setItem('token', res.access_token);
+        this._currentUser = res.user;
       })
     );
   }
 
   logout(): void {
     localStorage.removeItem('token');
+    this._currentUser = null;
   }
 
   getToken(): string | null {
@@ -49,5 +52,13 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.getToken();
+  }
+
+  getCurrentUserId(): number | null {
+    return this._currentUser?.id ?? null;
+  }
+
+  getCurrentUser(): { id: number; username: string; role: string } | null {
+    return this._currentUser;
   }
 }

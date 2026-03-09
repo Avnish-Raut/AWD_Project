@@ -34,7 +34,11 @@ export class LoginComponent {
       this.auth.login(this.loginForm.value).subscribe({
         next: () => {
           this.error = '';
-          this.router.navigate(['/events']);
+          this.message = 'Login successful!';
+          this.cd.detectChanges();
+
+          // Navigate to dashboard instead of /events
+          this.router.navigate(['/dashboard']);
         },
         error: (err) => {
           this.error = err.error?.message ?? 'Invalid email or password';

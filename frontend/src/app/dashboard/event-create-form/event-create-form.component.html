@@ -1,0 +1,15 @@
+<div class="event-create-container">
+  <h3>Create New Event</h3>
+  <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+    <label>Title<input formControlName="title" /></label>
+    <label>Location<input formControlName="location" /></label>
+    <label>Date<input type="date" formControlName="event_date" /></label>
+    <label>Description<textarea formControlName="description"></textarea></label>
+    <label>Capacity<input type="number" formControlName="capacity" /></label>
+
+    <button type="submit">Create Event</button>
+  </form>
+
+  <p class="message" *ngIf="message">{{ message }}</p>
+  <p class="error" *ngIf="error">{{ error }}</p>
+</div>

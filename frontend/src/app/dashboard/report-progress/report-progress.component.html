@@ -1,0 +1,14 @@
+<div class="report-container">
+  <h3>Participation Reports</h3>
+  <label>Select Event</label>
+  <select [(ngModel)]="selectedEventId">
+    <option *ngFor="let e of events" [value]="e.event_id">{{ e.title }}</option>
+  </select>
+
+  <button (click)="generateReport()" [disabled]="!selectedEventId">Generate Report</button>
+
+  <div *ngIf="status()">
+    <p>Status: {{ status() }}</p>
+    <progress [value]="progress()" max="100"></progress>
+  </div>
+</div>
