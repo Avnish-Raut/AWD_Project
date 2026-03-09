@@ -50,4 +50,33 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
+
+  /**
+   * Decodes the JWT payload and returns the user's role.
+   * Returns null if no token or token is malformed.
+   */
+  getRole(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.role ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Decodes the JWT payload and returns the user's ID.
+   */
+  getUserId(): number | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.sub ?? null;
+    } catch {
+      return null;
+    }
+  }
 }
