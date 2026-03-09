@@ -47,7 +47,7 @@ export class AuthService {
       where: { email: dto.email },
     });
 
-    if (!user) throw new UnauthorizedException('Invalid credentials');
+    if (!user || user.deleted_at) throw new UnauthorizedException('Invalid credentials');
 
     const valid = await bcrypt.compare(dto.password, user.password_hash);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
