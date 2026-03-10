@@ -18,6 +18,10 @@ interface LoginResponse {
   access_token: string;
 }
 
+interface ResetPasswordDto {
+  token: string;
+  password: string;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -35,10 +39,12 @@ export class AuthService {
       tap((res) => {
         // Save JWT in localStorage
         localStorage.setItem('token', res.access_token);
-      })
+      }),
     );
   }
-
+  reset(dto: ResetPasswordDto): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reset-password`, dto);
+  }
   logout(): void {
     localStorage.removeItem('token');
   }
@@ -49,6 +55,12 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.getToken();
+  }
+
+  forgotPassword(email: string) {
+    return this.http.post(`${this.apiUrl}/forgot-password`, {
+      email: email,
+    });
   }
 
   /**
