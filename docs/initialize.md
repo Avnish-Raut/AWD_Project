@@ -184,7 +184,7 @@ DB_USERNAME=postgres
 DB_PASSWORD=postgres
 DB_NAME=smart_events
 SMTP_USER=avnishjayprakashraut@gmail.com
-SMTP_PASS=xnhqjbhkfjweabng
+SMTP_PASS=ask_avnish
 FRONTEND_URL=http://localhost:4200
 
 # JWT
