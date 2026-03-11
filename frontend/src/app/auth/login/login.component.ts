@@ -36,7 +36,7 @@ export class LoginComponent {
           this.error = '';
           this.cdr.detectChanges();
           setTimeout(() => {
-            this.router.navigate(['/events']);
+            this.router.navigate(['/user-dashboard']);
           }, 1000);
         },
         error: (err) => {

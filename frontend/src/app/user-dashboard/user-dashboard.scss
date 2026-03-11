@@ -1,0 +1,58 @@
+.dashboard-container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+button {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.message {
+  color: green;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.error {
+  color: red;
+  text-align: center;
+}
