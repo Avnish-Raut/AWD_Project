@@ -179,9 +179,13 @@ NODE_ENV=development
 # Database
 DB_HOST=localhost
 DB_PORT=5432
+DATABASE_URL=postgresql://postgres:Password@localhost:5432/smart_events
 DB_USERNAME=postgres
 DB_PASSWORD=postgres
 DB_NAME=smart_events
+SMTP_USER=avnishjayprakashraut@gmail.com
+SMTP_PASS=xnhqjbhkfjweabng
+FRONTEND_URL=http://localhost:4200
 
 # JWT
 JWT_SECRET=change_this_secret_in_production
