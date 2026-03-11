@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -20,6 +20,7 @@ export class LoginComponent {
     private fb: FormBuilder,
     private auth: AuthService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -28,13 +29,15 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    this.loginForm.markAllAsTouched();
-
     if (this.loginForm.valid) {
       this.auth.login(this.loginForm.value).subscribe({
         next: () => {
+          this.message = 'Login successful! Redirecting...';
           this.error = '';
-          this.router.navigate(['/events']);
+          this.cdr.detectChanges();
+          setTimeout(() => {
+            this.router.navigate(['/events']);
+          }, 1000);
         },
         error: (err) => {
           this.error = err.error?.message ?? 'Invalid email or password';

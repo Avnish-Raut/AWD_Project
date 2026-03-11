@@ -14,7 +14,7 @@
       Email
       <input formControlName="email" />
     </label>
-    @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+    @if (registerForm.get('email')?.invalid && registerForm.get('email')?.dirty) {
       <div class="error">Enter a valid email</div>
     }
     <label>
