@@ -5,6 +5,11 @@ import { authGuard } from './core/guards/auth.guard';
 import { rolesGuard } from './core/guards/roles.guard';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password';
+import { AdminLayout } from './core/layouts/admin-layout/admin-layout';
+import { Dashboard } from './features/admin/dashboard/dashboard';
+import { UserManagement } from './features/admin/user-management/user-management';
+import { EventManagement } from './features/admin/event-management/event-management';
+import { SystemLogs } from './features/admin/system-logs/system-logs';
 
 export const routes: Routes = [
   // Public routes
@@ -24,9 +29,19 @@ export const routes: Routes = [
   // { path: 'organizer/events/create', component: CreateEventComponent, canActivate: [authGuard, rolesGuard(['ORG'])] },
 
   // Admin only
-  // { path: 'admin/users', component: AdminUsersComponent, canActivate: [authGuard, rolesGuard(['ADMIN'])] },
-  // { path: 'admin/logs', component: AdminLogsComponent, canActivate: [authGuard, rolesGuard(['ADMIN'])] },
-
+  {
+    path: 'admin',
+    component: AdminLayout,
+    canActivate: [authGuard, rolesGuard(['ADMIN'])],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: Dashboard },
+      { path: 'users', component: UserManagement },
+      { path: 'events', component: EventManagement },
+      { path: 'logs', component: SystemLogs },
+    ]
+  },
+  
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];

@@ -1,0 +1,33 @@
+<div class="admin-container">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>Admin Panel</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <ul>
+        <li>
+          <a routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a>
+        </li>
+        <li>
+          <a routerLink="/admin/users" routerLinkActive="active">User Management</a>
+        </li>
+        <li>
+          <a routerLink="/admin/events" routerLinkActive="active">Events</a>
+        </li>
+        <li>
+          <a routerLink="/admin/logs" routerLinkActive="active">System Logs</a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <span>Welcome, Admin</span>
+      <!-- Add logout logic / button here later -->
+    </header>
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
