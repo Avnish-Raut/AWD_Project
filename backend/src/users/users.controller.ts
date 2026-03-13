@@ -18,6 +18,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as fs from 'fs';
+import * as path from 'path';
 import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -72,13 +73,52 @@ export class UsersController {
       },
     }),
   )
-  uploadAvatar(
+  async uploadAvatar(
     @GetUser() user: JwtPayload,
     @UploadedFile() file: Express.Multer.File,
   ) {
     if (!file) throw new BadRequestException('No file uploaded');
+
+    // Fetch the current user to get their old avatar
+    const currentUser = await this.usersService.getProfile(user.sub);
+    
+    // If they already have an avatar, delete the old file to save space
+    if (currentUser.avatar_url) {
+      // avatar_url looks like "/uploads/avatars/filename.jpg"
+      // We need to resolve it relative to our project root
+      const oldFilePath = path.join(process.cwd(), currentUser.avatar_url);
+      if (fs.existsSync(oldFilePath)) {
+        try {
+          fs.unlinkSync(oldFilePath);
+        } catch (e) {
+          console.error(`Failed to delete old avatar file: ${oldFilePath}`, e);
+        }
+      }
+    }
+
     const avatarUrl = `/uploads/avatars/${file.filename}`;
     return this.usersService.updateProfile(user.sub, { avatar_url: avatarUrl });
+  }
+
+  // R37 - Delete Avatar (Remove entirely)
+  @Delete('me/avatar')
+  async deleteAvatar(@GetUser() user: JwtPayload) {
+    const currentUser = await this.usersService.getProfile(user.sub);
+    
+    if (currentUser.avatar_url) {
+      const oldFilePath = path.join(process.cwd(), currentUser.avatar_url);
+      if (fs.existsSync(oldFilePath)) {
+        try {
+          fs.unlinkSync(oldFilePath);
+        } catch (e) {
+          console.error(`Failed to delete old avatar file: ${oldFilePath}`, e);
+        }
+      }
+    }
+
+    // Pass null or empty string to clear the avatar in the DB
+    // Assuming updateProfile allows clearing if we update the service
+    return this.usersService.updateProfile(user.sub, { avatar_url: null } as any);
   }
 
   // R23 — Delete own account
