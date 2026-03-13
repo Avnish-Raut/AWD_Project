@@ -16,6 +16,7 @@ export class UserDashboardComponent implements OnInit {
 
   message = '';
   error = '';
+  cancellingId: number | null = null;
 
   constructor(
     private auth: AuthService,
@@ -46,17 +47,33 @@ export class UserDashboardComponent implements OnInit {
   }
 
   cancelRegistration(eventId: number) {
-    this.auth.cancelRegistration(eventId).subscribe({
-      next: () => {
-        this.message = 'Registration cancelled';
+    // 1. Show the confirmation box
+    const userConfirmed = confirm(
+      'Are you sure you want to cancel your registration for this event?',
+    );
 
-        this.myEvents = this.myEvents.filter((e) => e.event_id !== eventId);
-      },
+    // 2. Only proceed if they clicked 'OK'
+    if (userConfirmed) {
+      this.cancellingId = eventId;
 
-      error: () => {
-        this.error = 'Could not cancel registration';
-      },
-    });
+      this.auth.cancelRegistration(eventId).subscribe({
+        next: () => {
+          this.cancellingId = null;
+          alert('Registration successfully cancelled.'); // Success feedback
+          this.auth.getUserEvents();
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.cancellingId = null;
+          console.error(err);
+          this.cdr.detectChanges();
+        },
+      });
+    } else {
+      // User clicked 'Cancel' in the alert box
+      console.log('Cancellation aborted by user.');
+      this.cdr.detectChanges();
+    }
   }
 
   logout() {

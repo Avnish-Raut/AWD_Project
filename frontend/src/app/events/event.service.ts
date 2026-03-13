@@ -19,4 +19,12 @@ export class EventService {
 
     return this.http.get<any[]>(this.apiUrl, { params });
   }
+
+  getEventById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
+  registerForEvent(eventId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${eventId}/register`, { event_id: eventId });
+  }
 }

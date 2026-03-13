@@ -7,6 +7,7 @@ import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password'
 import { ResetPasswordComponent } from './auth/reset-password/reset-password';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard';
 import { BrowseEventsComponent } from './events/events';
+import { EventDetailsComponent } from './events/event-details/event-details';
 
 export const routes: Routes = [
   // Public routes
@@ -23,7 +24,7 @@ export const routes: Routes = [
   // Protected routes (canActivate: [authGuard] applied — add components as they are built)
   // Any logged-in user
   { path: 'events', component: BrowseEventsComponent, canActivate: [authGuard] },
-  // { path: 'events/:id', component: EventDetailComponent, canActivate: [authGuard] },
+  { path: 'events/:id', component: EventDetailsComponent, canActivate: [authGuard] },
   // { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
 
   // Organizer only

@@ -28,6 +28,7 @@ $shadow:
       margin: 0;
       font-size: 1.8rem;
       font-weight: 700;
+      display: block;
     }
 
     .user-meta {
@@ -38,7 +39,7 @@ $shadow:
       gap: 1.5rem;
     }
     .logout-button {
-      background: #4db8ff;
+      background: #684dff;
       color: #dc2626;
       border: none;
       padding: 0.5rem 0.3rem 0.5rem 0.9rem;

@@ -1,0 +1,172 @@
+$primary: #6366f1;
+$primary-dark: #4f46e5;
+$success: #10b981;
+$text-main: #1e293b;
+$text-muted: #64748b;
+$bg-light: #f8fafc;
+$white: #ffffff;
+$shadow:
+  0 10px 15px -3px rgba(0, 0, 0, 0.1),
+  0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+.details-wrapper {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  font-family: 'Inter', system-ui, sans-serif;
+
+  .btn-back {
+    background: transparent;
+    border: none;
+    color: $primary;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: translateX(-5px);
+    }
+  }
+
+  .event-hero {
+    background: $white;
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: $shadow;
+    margin-bottom: 2rem;
+
+    .badge {
+      background: #eef2ff;
+      color: $primary;
+      padding: 0.5rem 1rem;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: $text-main;
+      margin: 1.5rem 0;
+      line-height: 1.2;
+    }
+
+    .meta-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      color: $text-muted;
+      font-size: 1rem;
+
+      span {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+    }
+  }
+
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+
+    .main-info {
+      background: $white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: $shadow;
+
+      h3 {
+        color: $text-main;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid $bg-light;
+        padding-bottom: 0.5rem;
+      }
+
+      .description {
+        line-height: 1.8;
+        color: #475569;
+        white-space: pre-wrap; // Respects line breaks from backend
+        font-size: 1.1rem;
+      }
+    }
+
+    .registration-card {
+      background: $text-main; // Dark blue/black look
+      color: $white;
+      padding: 2rem;
+      border-radius: 20px;
+      height: fit-content;
+      position: sticky;
+      top: 2rem;
+      box-shadow: $shadow;
+
+      h3 {
+        margin-top: 0;
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+      }
+
+      p {
+        opacity: 0.9;
+        margin-bottom: 2rem;
+
+        strong {
+          font-size: 1.2rem;
+          color: $primary;
+        }
+      }
+
+      button {
+        width: 100%;
+        padding: 1rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &.btn-register {
+          background: $primary;
+          color: white;
+
+          &:hover:not(:disabled) {
+            background: $primary-dark;
+            transform: translateY(-2px);
+          }
+
+          &:disabled {
+            background: #4b5563;
+            cursor: not-allowed;
+            opacity: 0.7;
+          }
+        }
+
+        &.btn-registered {
+          background: rgba($success, 0.2);
+          color: $success;
+          border: 1px solid $success;
+          cursor: default;
+        }
+      }
+    }
+  }
+
+  .status-msg {
+    text-align: center;
+    padding: 5rem;
+    font-size: 1.2rem;
+    color: $text-muted;
+  }
+}
