@@ -36,6 +36,7 @@ model User {
   email         String    @unique @db.VarChar(100)
   password_hash String    @db.VarChar(255)
   role          Role      @default(USER)
+  avatar_url    String?   @default("/uploads/avatars/default-avatar.png") @db.VarChar(500)
   created_at    DateTime  @default(now())
   deleted_at    DateTime?
 
