@@ -28,4 +28,9 @@ export class UpdateProfileDto {
   @MinLength(8)
   @MaxLength(100)
   new_password?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  avatar_url?: string;
 }
