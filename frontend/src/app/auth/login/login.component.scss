@@ -1,10 +1,24 @@
+$primary: #4f46e5;
+$primary-dark: #3730a3;
+$primary-light: #d4d2f9;
+$bg-light: #f9fafb;
+$text-main: #111827;
+$text-muted: #6b7280;
+$white: #ffffff;
+$shadow:
+  0 10px 15px -3px rgba(0, 0, 0, 0.1),
+  0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
 .login-container {
   max-width: 400px;
   margin: 2rem auto;
   padding: 2rem;
   border: 1px solid #ccc;
   border-radius: 10px;
-  background: #948fef;
+  background: linear-gradient(135deg, $primary 0%, $primary-dark 100%);
+  padding: 2.5rem 2rem;
+  color: $white;
+  box-shadow: $shadow;
 
   h2 {
     text-align: center;
@@ -26,6 +40,7 @@
         margin-top: 0.25rem;
         border-radius: 5px;
         border: 1px solid #ccc;
+        background-color: $primary-light;
       }
     }
 
@@ -49,7 +64,7 @@
       text-align: center;
       font-size: large;
       a {
-        color: #3333ff;
+        color: $primary-light;
         text-decoration: none;
 
         &:hover {
