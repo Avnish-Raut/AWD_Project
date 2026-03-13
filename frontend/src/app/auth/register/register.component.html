@@ -6,25 +6,24 @@
       Username
       <input formControlName="username" />
     </label>
-    <div *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" class="error">
-      Username is required
-    </div>
+    @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
+      <div class="error">Username is required</div>
+    }
 
     <label>
       Email
       <input formControlName="email" />
     </label>
-    <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="error">
-      Enter a valid email
-    </div>
-
+    @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+      <div class="error">Enter a valid email</div>
+    }
     <label>
       Password
       <input type="password" formControlName="password" />
     </label>
-    <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="error">
-      Password must be at least 6 characters
-    </div>
+    @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+      <div class="error">Password must be at least 8 characters</div>
+    }
 
     <label>
       Role
@@ -42,6 +41,10 @@
     </p>
   </form>
 
-  <p class="message" *ngIf="message">{{ message }}</p>
-  <p class="error" *ngIf="error">{{ error }}</p>
+  @if (message) {
+    <p class="message">{{ message }}</p>
+  }
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
 </div>
