@@ -27,6 +27,7 @@ export class UsersService {
         username: true,
         email: true,
         role: true,
+        avatar_url: true,
         created_at: true,
       },
     });
@@ -40,7 +41,8 @@ export class UsersService {
     const hasUpdate =
       dto.username !== undefined ||
       dto.email !== undefined ||
-      dto.new_password !== undefined;
+      dto.new_password !== undefined ||
+      dto.avatar_url !== undefined;
     if (!hasUpdate)
       throw new BadRequestException('No fields provided for update');
 
@@ -71,6 +73,7 @@ export class UsersService {
     const data: Record<string, unknown> = {};
     if (dto.username !== undefined) data.username = dto.username;
     if (dto.email !== undefined) data.email = dto.email;
+    if (dto.avatar_url !== undefined) data.avatar_url = dto.avatar_url;
     if (dto.new_password !== undefined)
       data.password_hash = await bcrypt.hash(dto.new_password, 10);
 
@@ -82,6 +85,7 @@ export class UsersService {
         username: true,
         email: true,
         role: true,
+        avatar_url: true,
         created_at: true,
       },
     });
@@ -120,6 +124,7 @@ export class UsersService {
         username: true,
         email: true,
         role: true,
+        avatar_url: true,
         created_at: true,
         deleted_at: true,
       },

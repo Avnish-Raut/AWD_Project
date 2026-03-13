@@ -11,7 +11,14 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import * as fs from 'fs';
+import * as path from 'path';
 import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -42,6 +49,72 @@ export class UsersController {
     @Body() dto: UpdateProfileDto,
   ) {
     return this.usersService.updateProfile(user.sub, dto);
+  }
+
+  // R37 - Upload Avatar
+  @Post('me/avatar')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          const dir = './uploads/avatars';
+          if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+          }
+          cb(null, dir);
+        },
+        filename: (req, file, cb) => {
+          const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9) + '-' + file.originalname.replace(/[^a-zA-Z0-9.\-_]/g, '');
+          cb(null, uniqueName);
+        },
+      }),
+      limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB
+      },
+    }),
+  )
+  async uploadAvatar(
+    @GetUser() user: JwtPayload,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) throw new BadRequestException('No file uploaded');
+
+    const currentUser = await this.usersService.getProfile(user.sub);
+    
+    if (currentUser.avatar_url) {
+      const oldFilePath = path.join(process.cwd(), currentUser.avatar_url);
+      if (fs.existsSync(oldFilePath)) {
+        try {
+          fs.unlinkSync(oldFilePath);
+        } catch (e) {
+          console.error(`Failed to delete old avatar file: ${oldFilePath}`, e);
+        }
+      }
+    }
+
+    const avatarUrl = `/uploads/avatars/${file.filename}`;
+    return this.usersService.updateProfile(user.sub, { avatar_url: avatarUrl });
+  }
+
+  // R37 - Delete Avatar (Remove entirely)
+  @Delete('me/avatar')
+  async deleteAvatar(@GetUser() user: JwtPayload) {
+    const currentUser = await this.usersService.getProfile(user.sub);
+    
+    if (currentUser.avatar_url) {
+      const oldFilePath = path.join(process.cwd(), currentUser.avatar_url);
+      if (fs.existsSync(oldFilePath)) {
+        try {
+          fs.unlinkSync(oldFilePath);
+        } catch (e) {
+          console.error(`Failed to delete old avatar file: ${oldFilePath}`, e);
+        }
+      }
+    }
+
+    // Pass null or empty string to clear the avatar in the DB
+    // Assuming updateProfile allows clearing if we update the service
+    return this.usersService.updateProfile(user.sub, { avatar_url: null } as any);
   }
 
   // R23 — Delete own account
