@@ -5,9 +5,12 @@
       <span> {{ user.email }}</span>
       <span> Role: {{ user.role }}</span>
     </div>
-    <div class="logout-button">
-      <button (click)="logout()">Logout</button>
-    </div>
+    <button
+      style="background-color: #4f46e5; color: white; margin-top: 10px; padding: 10px"
+      (click)="logout()"
+    >
+      Logout
+    </button>
   </header>
 
   <main class="dashboard-content">

@@ -24,6 +24,9 @@ export class UserDashboardComponent implements OnInit {
     private cdr: ChangeDetectorRef,
   ) {}
 
+  reloadPage(): void {
+    window.location.reload();
+  }
   ngOnInit() {
     // Load logged-in user profile
     this.auth.getProfile().subscribe({
@@ -61,7 +64,7 @@ export class UserDashboardComponent implements OnInit {
           this.cancellingId = null;
           alert('Registration successfully cancelled.'); // Success feedback
           this.auth.getUserEvents();
-          this.cdr.detectChanges();
+          this.reloadPage();
         },
         error: (err) => {
           this.cancellingId = null;

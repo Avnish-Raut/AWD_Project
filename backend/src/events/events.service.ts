@@ -97,7 +97,7 @@ export class EventsService {
           },
         },
         _count: {
-          select: { registrations: true },
+          select: { registrations: { where: { status: 'CONFIRMED' } } },
         },
       },
       orderBy: { created_at: 'desc' },
@@ -109,7 +109,9 @@ export class EventsService {
       where: { event_id: eventId },
       include: {
         organizer: { select: { user_id: true, username: true } },
-        _count: { select: { registrations: true } },
+        _count: {
+          select: { registrations: { where: { status: 'CONFIRMED' } } },
+        },
       },
     });
     if (!event) throw new NotFoundException('Event not found');
