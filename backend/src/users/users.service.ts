@@ -6,12 +6,17 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { LogsService } from '../logs/logs.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { Role, LogLevel } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private logs: LogsService,
+  ) {}
 
   // R29 — Get own profile
   async getProfile(userId: number) {
@@ -80,5 +85,111 @@ export class UsersService {
         created_at: true,
       },
     });
+  }
+
+  // ─── R23: Delete own account (soft delete) ────────────────────────────────
+
+  async deleteAccount(userId: number) {
+    const user = await this.prisma.user.findUnique({ where: { user_id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    if (user.deleted_at) throw new ConflictException('Account already deleted');
+
+    await this.prisma.user.update({
+      where: { user_id: userId },
+      data: { deleted_at: new Date() },
+    });
+
+    await this.logs.create(LogLevel.INFO, `User ${userId} deleted their account`, userId);
+    return { message: 'Account deleted successfully' };
+  }
+
+  // ─── R25: Admin – list all users ──────────────────────────────────────────
+
+  async findAll(search?: string) {
+    return this.prisma.user.findMany({
+      where: search
+        ? {
+            OR: [
+              { username: { contains: search, mode: 'insensitive' } },
+              { email: { contains: search, mode: 'insensitive' } },
+            ],
+          }
+        : undefined,
+      select: {
+        user_id: true,
+        username: true,
+        email: true,
+        role: true,
+        created_at: true,
+        deleted_at: true,
+      },
+      orderBy: { created_at: 'desc' },
+    });
+  }
+
+  // ─── R25: Admin – get single user ─────────────────────────────────────────
+
+  async findOne(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { user_id: userId },
+      select: {
+        user_id: true,
+        username: true,
+        email: true,
+        role: true,
+        created_at: true,
+        deleted_at: true,
+        _count: { select: { events: true, registrations: true } },
+      },
+    });
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
+
+  // ─── R25: Admin – update user role ────────────────────────────────────────
+
+  async updateRole(userId: number, role: Role) {
+    const user = await this.prisma.user.findUnique({ where: { user_id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const updated = await this.prisma.user.update({
+      where: { user_id: userId },
+      data: { role },
+      select: { user_id: true, username: true, email: true, role: true },
+    });
+
+    await this.logs.create(LogLevel.INFO, `Admin changed user ${userId} role to ${role}`);
+    return updated;
+  }
+
+  // ─── R25: Admin – deactivate user ─────────────────────────────────────────
+
+  async deactivateUser(userId: number) {
+    const user = await this.prisma.user.findUnique({ where: { user_id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    if (user.deleted_at) throw new ConflictException('User already deactivated');
+
+    await this.prisma.user.update({
+      where: { user_id: userId },
+      data: { deleted_at: new Date() },
+    });
+
+    await this.logs.create(LogLevel.WARN, `Admin deactivated user ${userId}`);
+    return { message: 'User deactivated successfully' };
+  }
+
+  // ─── R25: Admin – reactivate user ─────────────────────────────────────────
+
+  async reactivateUser(userId: number) {
+    const user = await this.prisma.user.findUnique({ where: { user_id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    await this.prisma.user.update({
+      where: { user_id: userId },
+      data: { deleted_at: null },
+    });
+
+    await this.logs.create(LogLevel.INFO, `Admin reactivated user ${userId}`);
+    return { message: 'User reactivated successfully' };
   }
 }

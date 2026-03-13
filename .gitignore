@@ -332,3 +332,7 @@ planning/
 
 #uploaded files
 backend/uploads/
+
+# Allow NestJS source modules named 'logs' (overrides the Node 'logs' rule above)
+!backend/src/logs/
+!backend/src/logs/**
