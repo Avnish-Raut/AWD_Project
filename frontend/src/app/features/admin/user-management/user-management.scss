@@ -185,3 +185,49 @@ $shadow:
   color: #dc2626;
   background: #fee2e2;
 }
+
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: $bg-light;
+  border-top: 1px solid $border-color;
+  
+  .pagination-info {
+    color: $text-muted;
+    font-size: 0.9rem;
+  }
+  
+  .pagination-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    
+    button {
+      background: $white;
+      border: 1px solid $border-color;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      color: $text-main;
+      font-weight: 500;
+      transition: all 0.2s;
+      
+      &:hover:not(:disabled) {
+        background: #f3f4f6;
+        border-color: #d1d5db;
+      }
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+    
+    .page-number {
+      font-weight: 600;
+      color: $text-main;
+    }
+  }
+}

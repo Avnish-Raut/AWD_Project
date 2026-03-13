@@ -15,6 +15,11 @@ export class UserManagement implements OnInit {
   loading: boolean = true;
   error: string | null = null;
   searchQuery: string = '';
+  
+  // Pagination
+  currentPage: number = 1;
+  pageSize: number = 10;
+  totalUsers: number = 0;
 
   constructor(private usersService: UsersService) {}
 
@@ -24,9 +29,12 @@ export class UserManagement implements OnInit {
 
   loadUsers(): void {
     this.loading = true;
-    this.usersService.getUsers(this.searchQuery).subscribe({
-      next: (data) => {
-        this.users = data;
+    const skip = (this.currentPage - 1) * this.pageSize;
+    
+    this.usersService.getUsers(this.searchQuery, skip, this.pageSize).subscribe({
+      next: (response) => {
+        this.users = response.data;
+        this.totalUsers = response.total;
         this.loading = false;
         this.error = null;
       },
@@ -39,7 +47,26 @@ export class UserManagement implements OnInit {
   }
 
   onSearch(): void {
+    this.currentPage = 1; // Reset to page 1 on new search
     this.loadUsers();
+  }
+
+  nextPage(): void {
+    if (this.currentPage * this.pageSize < this.totalUsers) {
+      this.currentPage++;
+      this.loadUsers();
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadUsers();
+    }
+  }
+
+  min(a: number, b: number): number {
+    return Math.min(a, b);
   }
 
   updateRole(user: User, newRole: string): void {

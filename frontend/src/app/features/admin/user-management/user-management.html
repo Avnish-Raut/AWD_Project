@@ -76,4 +76,23 @@
       </tr>
     </tbody>
   </table>
+
+  <div class="pagination-controls" *ngIf="totalUsers > 0">
+    <div class="pagination-info">
+      Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ min(currentPage * pageSize, totalUsers) }} of {{ totalUsers }} users
+    </div>
+    <div class="pagination-buttons">
+      <button 
+        [disabled]="currentPage === 1" 
+        (click)="previousPage()">
+        Previous
+      </button>
+      <span class="page-number">Page {{ currentPage }}</span>
+      <button 
+        [disabled]="currentPage * pageSize >= totalUsers" 
+        (click)="nextPage()">
+        Next
+      </button>
+    </div>
+  </div>
 </div>

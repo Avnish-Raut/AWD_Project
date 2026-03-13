@@ -12,6 +12,11 @@ export interface User {
   deleted_at: string | null;
 }
 
+export interface UsersResponse {
+  data: User[];
+  total: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,12 +25,13 @@ export class UsersService {
 
   constructor(private http: HttpClient) {}
 
-  getUsers(search?: string): Observable<User[]> {
+  getUsers(search?: string, skip?: number, take?: number): Observable<UsersResponse> {
     let params = new HttpParams();
-    if (search) {
-      params = params.set('search', search);
-    }
-    return this.http.get<User[]>(this.apiUrl, { params });
+    if (search) params = params.set('search', search);
+    if (skip !== undefined) params = params.set('skip', skip.toString());
+    if (take !== undefined) params = params.set('take', take.toString());
+    
+    return this.http.get<UsersResponse>(this.apiUrl, { params });
   }
 
   updateUserRole(userId: number, role: string): Observable<User> {

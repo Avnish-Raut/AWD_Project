@@ -48,6 +48,7 @@ export class LoginComponent {
         error: (err) => {
           this.error = err.error?.message ?? 'Invalid email or password';
           this.message = '';
+          this.cdr.detectChanges();
         },
       });
     } else {

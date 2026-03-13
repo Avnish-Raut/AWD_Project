@@ -126,12 +126,12 @@ export class UsersController {
 
   // ─── Admin endpoints (ADMIN role only) ─────────────────────────────
 
-  // R25 — List all users
-  @Get()
-  @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
-  findAll(@Query('search') search?: string) {
-    return this.usersService.findAll(search);
+  findAll(
+    @Query('search') search?: string,
+    @Query('skip') skip?: string,
+    @Query('take') take?: string,
+  ) {
+    return this.usersService.findAll(search, skip ? Number(skip) : undefined, take ? Number(take) : undefined);
   }
 
   // R25 — Get user by ID
