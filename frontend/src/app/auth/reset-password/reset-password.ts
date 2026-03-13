@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -22,10 +22,16 @@ export class ResetPasswordComponent implements OnInit {
     private auth: AuthService,
     private route: ActivatedRoute,
     private router: Router,
-    private cdr: ChangeDetectorRef,
   ) {
     this.resetForm = this.fb.group({
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/),
+        ],
+      ],
     });
   }
 
@@ -46,22 +52,17 @@ export class ResetPasswordComponent implements OnInit {
         next: () => {
           this.error = '';
           this.message = 'Password successfully reset';
-          this.cdr.detectChanges();
-          setTimeout(() => {
-            this.router.navigate(['/login']);
-          }, 2000);
+          this.router.navigate(['/login']);
         },
 
         error: (err) => {
           this.error = err.error?.message ?? 'Reset password failed';
           this.message = '';
-          this.cdr.detectChanges();
         },
       });
     } else {
       this.error =
         'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character';
-      this.cdr.detectChanges();
     }
   }
 }

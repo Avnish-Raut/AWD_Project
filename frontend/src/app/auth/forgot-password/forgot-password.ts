@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
@@ -18,7 +18,6 @@ export class ForgotPasswordComponent {
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
-    private cdr: ChangeDetectorRef,
   ) {
     this.forgotForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -42,15 +41,11 @@ export class ForgotPasswordComponent {
     this.auth.forgotPassword(email).subscribe({
       next: () => {
         this.message = 'Password reset email sent. Check your inbox.';
-        this.cdr.detectChanges();
-        setTimeout(() => {
-          this.loading = true;
-        }, 1);
+        this.loading = false;
       },
 
       error: (err) => {
         this.error = err.error?.message ?? 'Failed to send reset email';
-        this.cdr.detectChanges();
         this.loading = false;
       },
     });
