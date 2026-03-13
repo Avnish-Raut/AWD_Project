@@ -35,8 +35,14 @@ export class LoginComponent {
           this.message = 'Login successful! Redirecting...';
           this.error = '';
           this.cdr.detectChanges();
+          
           setTimeout(() => {
-            this.router.navigate(['/events']);
+            const userRole = this.auth.getRole();
+            if (userRole === 'ADMIN') {
+              this.router.navigate(['/admin/dashboard']);
+            } else {
+              this.router.navigate(['/events']);
+            }
           }, 1000);
         },
         error: (err) => {
