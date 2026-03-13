@@ -1,0 +1,169 @@
+// Colors
+$primary: #6366f1;
+$primary-hover: #4f46e5;
+$bg-body: #f8fafc;
+$white: #ffffff;
+$text-dark: #1e293b;
+$text-light: #64748b;
+$shadow:
+  0 4px 6px -1px rgb(0 0 0 / 0.1),
+  0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+.browse-wrapper {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  font-family: 'Inter', system-ui, sans-serif;
+
+  .top-nav {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .btn-back {
+    background: transparent;
+    color: #6366f1; // Matches your primary theme
+    border: 1px solid #6366f1;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &:hover {
+      background: #6366f1;
+      color: white;
+      transform: translateX(-3px); // Subtle "pointing" animation
+    }
+  }
+  // Search/Filter Bar
+  .filters {
+    display: flex;
+    gap: 1rem;
+    background: $white;
+    padding: 1.25rem;
+    border-radius: 12px;
+    box-shadow: $shadow;
+    margin-bottom: 2.5rem;
+    align-items: center;
+
+    input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: $primary;
+        box-shadow: 0 0 0 3px rgba($primary, 0.1);
+      }
+
+      &[type='date'] {
+        max-width: 200px;
+        color: $text-light;
+      }
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      input {
+        width: 100%;
+        max-width: none;
+      }
+    }
+  }
+
+  // Event Grid
+  .event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  // Individual Cards
+  .event-card {
+    background: $white;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: $shadow;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+    border: 1px solid #f1f5f9;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    }
+
+    .card-content {
+      padding: 1.5rem;
+      flex-grow: 1;
+
+      h3 {
+        margin: 0 0 0.75rem 0;
+        font-size: 1.25rem;
+        color: $text-dark;
+        font-weight: 700;
+      }
+
+      p {
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: $text-light;
+      }
+
+      .badge {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.25rem 0.75rem;
+        background: #eef2ff;
+        color: $primary;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border-radius: 20px;
+      }
+    }
+
+    .btn-primary {
+      margin: 0 1.5rem 1.5rem 1.5rem;
+      background: $primary;
+      color: $white;
+      border: none;
+      padding: 0.8rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.2s;
+
+      &:hover {
+        background: $primary-hover;
+      }
+    }
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 5rem;
+    color: $text-light;
+    font-size: 1.1rem;
+    background: $white;
+    border-radius: 12px;
+    border: 2px dashed #e2e8f0;
+  }
+}

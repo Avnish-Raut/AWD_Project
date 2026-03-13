@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UserDashboardComponent } from './user-dashboard';
+import { EventDetails } from './event-details';
 
-describe('UserDashboard', () => {
-  let component: UserDashboardComponent;
-  let fixture: ComponentFixture<UserDashboardComponent>;
+describe('EventDetails', () => {
+  let component: EventDetails;
+  let fixture: ComponentFixture<EventDetails>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserDashboardComponent],
+      imports: [EventDetails],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(UserDashboardComponent);
+    fixture = TestBed.createComponent(EventDetails);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

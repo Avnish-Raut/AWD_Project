@@ -28,6 +28,7 @@ $shadow:
       margin: 0;
       font-size: 1.8rem;
       font-weight: 700;
+      display: block;
     }
 
     .user-meta {
@@ -38,7 +39,7 @@ $shadow:
       gap: 1.5rem;
     }
     .logout-button {
-      background: #4db8ff;
+      background: #684dff;
       color: #dc2626;
       border: none;
       padding: 0.5rem 0.3rem 0.5rem 0.9rem;
@@ -110,4 +111,57 @@ $shadow:
       }
     }
   }
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #f3f4f6;
+  padding-bottom: 0.5rem;
+
+  h2 {
+    margin: 0;
+    border: none;
+  } // Remove bottom border from h2 since parent has it
+}
+
+.btn-browse {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #4338ca;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 2px dashed #e5e7eb;
+
+  p {
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.btn-primary-large {
+  background: #4f46e5;
+  color: white;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
 }

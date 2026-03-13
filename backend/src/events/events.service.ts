@@ -86,6 +86,7 @@ export class EventsService {
         registrations: {
           some: {
             user_id: userId,
+            status: 'CONFIRMED',
           },
         },
       },
@@ -96,7 +97,7 @@ export class EventsService {
           },
         },
         _count: {
-          select: { registrations: true },
+          select: { registrations: { where: { status: 'CONFIRMED' } } },
         },
       },
       orderBy: { created_at: 'desc' },
@@ -108,7 +109,9 @@ export class EventsService {
       where: { event_id: eventId },
       include: {
         organizer: { select: { user_id: true, username: true } },
-        _count: { select: { registrations: true } },
+        _count: {
+          select: { registrations: { where: { status: 'CONFIRMED' } } },
+        },
       },
     });
     if (!event) throw new NotFoundException('Event not found');
@@ -224,8 +227,12 @@ export class EventsService {
     const existing = await this.prisma.registration.findUnique({
       where: { user_id_event_id: { user_id: userId, event_id: eventId } },
     });
-    if (!existing || existing.status === 'CANCELLED')
-      throw new NotFoundException('No active registration found');
+
+    // If it doesn't exist at all, that's a real 404
+    if (!existing) throw new NotFoundException('Registration not found');
+
+    // If it's already cancelled, just return the record instead of throwing error
+    if (existing.status === 'CANCELLED') return existing;
 
     return this.prisma.registration.update({
       where: { user_id_event_id: { user_id: userId, event_id: eventId } },

@@ -5,9 +5,12 @@
       <span> {{ user.email }}</span>
       <span> Role: {{ user.role }}</span>
     </div>
-    <div class="logout-button">
-      <button (click)="logout()">Logout</button>
-    </div>
+    <button
+      style="background-color: #4f46e5; color: white; margin-top: 10px; padding: 10px"
+      (click)="logout()"
+    >
+      Logout
+    </button>
   </header>
 
   <main class="dashboard-content">
@@ -22,12 +25,14 @@
         </div>
         <button class="btn-cancel" (click)="cancelRegistration(event.event_id)">Cancel</button>
       </div>
+      <button class="btn-browse" routerLink="/events">🔍 Find More Events</button>
     </div>
 
     <ng-template #noEvents>
       <p style="color: #6b7280; text-align: center; margin-top: 2rem">
         You haven't registered for any events yet.
       </p>
+      <button class="btn-browse" routerLink="/events">🔍 Browse Events</button>
     </ng-template>
   </main>
 </div>
