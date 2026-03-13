@@ -5,6 +5,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { rolesGuard } from './core/guards/roles.guard';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password';
+import { UserDashboardComponent } from './user-dashboard/user-dashboard';
 
 export const routes: Routes = [
   // Public routes
@@ -13,6 +14,11 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
 
   { path: 'reset-password', component: ResetPasswordComponent },
+  {
+    path: 'user-dashboard',
+    component: UserDashboardComponent,
+    canActivate: [authGuard, rolesGuard(['USER'])],
+  },
   // Protected routes (canActivate: [authGuard] applied — add components as they are built)
   // Any logged-in user
   // { path: 'events', component: EventListComponent, canActivate: [authGuard] },

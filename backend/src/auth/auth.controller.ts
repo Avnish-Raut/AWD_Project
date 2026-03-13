@@ -1,8 +1,16 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Get,
+  Request,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 @Controller('auth')
 export class AuthController {
   constructor(private auth: AuthService) {}
@@ -26,5 +34,14 @@ export class AuthController {
   async resetPassword(@Body() dto: ResetPasswordDto) {
     //console.log(dto);
     return this.auth.resetPassword(dto.token, dto.password);
+  }
+
+  // backend/src/auth/auth.controller.ts
+
+  @Get('profile')
+  @UseGuards(JwtAuthGuard) // This ensures only logged-in users can see this
+  async getProfile(@Request() req) {
+    const userId = req.user.sub;
+    return this.auth.getUserProfile(userId);
   }
 }

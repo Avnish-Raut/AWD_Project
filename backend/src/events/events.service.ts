@@ -79,6 +79,29 @@ export class EventsService {
     });
   }
 
+  // List events the user is registered for
+  async findUserEvents(userId: number) {
+    return this.prisma.event.findMany({
+      where: {
+        registrations: {
+          some: {
+            user_id: userId,
+          },
+        },
+      },
+      include: {
+        organizer: {
+          select: {
+            username: true,
+          },
+        },
+        _count: {
+          select: { registrations: true },
+        },
+      },
+      orderBy: { created_at: 'desc' },
+    });
+  }
   // Get a single event by ID
   async findOne(eventId: number) {
     const event = await this.prisma.event.findUnique({
@@ -168,8 +191,7 @@ export class EventsService {
 
     if (!event.is_published)
       throw new BadRequestException('Event is not published');
-    if (event.is_cancelled)
-      throw new BadRequestException('Event is cancelled');
+    if (event.is_cancelled) throw new BadRequestException('Event is cancelled');
 
     // R15 — capacity check
     const count = await this.prisma.registration.count({

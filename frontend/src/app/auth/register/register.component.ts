@@ -43,16 +43,17 @@ export class RegisterComponent {
         this.cdr.detectChanges();
         setTimeout(() => {
           this.router.navigate(['/login']);
-        }, 2000);
+        }, 3000);
       },
       error: (err) => {
         this.message = '';
         if (err.status === 409) {
           this.error = 'User with this email already exists.';
+          this.cdr.detectChanges();
         } else {
           this.error = err.error?.message ?? 'Registration failed';
+          this.cdr.detectChanges();
         }
-        this.cdr.detectChanges();
       },
     });
   }

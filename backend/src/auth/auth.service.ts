@@ -3,6 +3,7 @@ import {
   UnauthorizedException,
   ConflictException,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
@@ -125,5 +126,25 @@ export class AuthService {
     });
 
     return { message: 'Password successfully reset' };
+  }
+
+  async getUserProfile(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { user_id: userId },
+      select: {
+        user_id: true,
+        username: true,
+        email: true,
+        role: true,
+      },
+    });
+
+    console.log('User found in DB:', user);
+
+    if (!user) {
+      throw new NotFoundException('User not found in database');
+    }
+
+    return user;
   }
 }
