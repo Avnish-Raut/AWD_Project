@@ -79,13 +79,9 @@ export class UsersController {
   ) {
     if (!file) throw new BadRequestException('No file uploaded');
 
-    // Fetch the current user to get their old avatar
     const currentUser = await this.usersService.getProfile(user.sub);
     
-    // If they already have an avatar, delete the old file to save space
     if (currentUser.avatar_url) {
-      // avatar_url looks like "/uploads/avatars/filename.jpg"
-      // We need to resolve it relative to our project root
       const oldFilePath = path.join(process.cwd(), currentUser.avatar_url);
       if (fs.existsSync(oldFilePath)) {
         try {
