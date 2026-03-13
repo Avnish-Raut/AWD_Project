@@ -31,8 +31,8 @@ export class UserDashboardComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Profile Load Failed:', err);
-        //this.router.navigate(['/login']);
+        //  console.error('Profile Load Failed:', err);
+        this.router.navigate(['/login']);
       },
     });
 

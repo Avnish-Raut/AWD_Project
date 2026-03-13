@@ -34,7 +34,7 @@ export class LoginComponent {
         next: () => {
           this.message = 'Login successful! Redirecting...';
           this.error = '';
-          this.cdr.detectChanges();
+          // this.cdr.detectChanges();
           setTimeout(() => {
             this.router.navigate(['/user-dashboard']);
           }, 1000);
@@ -42,6 +42,7 @@ export class LoginComponent {
         error: (err) => {
           this.error = err.error?.message ?? 'Invalid email or password';
           this.message = '';
+          this.cdr.detectChanges();
         },
       });
     } else {

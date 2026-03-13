@@ -139,7 +139,7 @@ export class AuthService {
       },
     });
 
-    console.log('User found in DB:', user);
+    //console.log('User found in DB:', user);
 
     if (!user) {
       throw new NotFoundException('User not found in database');
