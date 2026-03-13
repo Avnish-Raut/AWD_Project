@@ -1,58 +1,113 @@
+// Colors
+$primary: #4f46e5;
+$primary-dark: #3730a3;
+$bg-light: #f9fafb;
+$text-main: #111827;
+$text-muted: #6b7280;
+$white: #ffffff;
+$shadow:
+  0 10px 15px -3px rgba(0, 0, 0, 0.1),
+  0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
 .dashboard-container {
-  max-width: 700px;
-  margin: 2rem auto;
-  padding: 2rem;
-}
-
-h2 {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.card {
-  background: #f9f9f9;
-  border: 1px solid #ccc;
-  padding: 1rem;
-  border-radius: 10px;
-  margin-bottom: 1.5rem;
-}
-
-ul {
-  list-style: none;
+  max-width: 800px;
+  margin: 3rem auto;
   padding: 0;
-}
+  background: $white;
+  border-radius: 12px;
+  box-shadow: $shadow;
+  overflow: hidden;
+  font-family: 'Inter', system-ui, sans-serif;
 
-li {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-}
+  .dashboard-header {
+    background: linear-gradient(135deg, $primary 0%, $primary-dark 100%);
+    padding: 2.5rem 2rem;
+    color: $white;
 
-button {
-  padding: 0.4rem 0.8rem;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-}
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
 
-button:hover {
-  background-color: #0056b3;
-}
+    .user-meta {
+      margin-top: 0.5rem;
+      opacity: 0.9;
+      font-size: 1rem;
+      display: flex;
+      gap: 1.5rem;
+    }
+    .logout-button {
+      background: #4db8ff;
+      color: #dc2626;
+      border: none;
+      padding: 0.5rem 0.3rem 0.5rem 0.9rem;
+      border-radius: 6px;
+      font-weight: 600;
+      margin-top: 2%;
+      height: 10%;
+      width: 10%;
+      cursor: pointer;
+      transition: background 0.2s;
 
-.actions {
-  display: flex;
-  justify-content: space-between;
-}
+      &:hover {
+        background: #fecaca;
+      }
+    }
+  }
 
-.message {
-  color: green;
-  text-align: center;
-  margin-top: 1rem;
-}
+  .dashboard-content {
+    padding: 2rem;
 
-.error {
-  color: red;
-  text-align: center;
+    h2 {
+      color: $text-main;
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid $bg-light;
+      padding-bottom: 0.5rem;
+    }
+  }
+
+  .event-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: $bg-light;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    .event-info {
+      strong {
+        display: block;
+        color: $text-main;
+        font-size: 1.1rem;
+      }
+      span {
+        display: block;
+        color: $text-muted;
+        font-size: 0.9rem;
+      }
+    }
+
+    .btn-cancel {
+      background: #fee2e2;
+      color: #dc2626;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      &:hover {
+        background: #fecaca;
+      }
+    }
+  }
 }

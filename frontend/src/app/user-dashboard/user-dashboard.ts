@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
@@ -20,6 +20,7 @@ export class UserDashboardComponent implements OnInit {
   constructor(
     private auth: AuthService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -27,9 +28,11 @@ export class UserDashboardComponent implements OnInit {
     this.auth.getProfile().subscribe({
       next: (data) => {
         this.user = data;
+        this.cdr.detectChanges();
       },
-      error: () => {
-        this.router.navigate(['/login']);
+      error: (err) => {
+        console.error('Profile Load Failed:', err);
+        //this.router.navigate(['/login']);
       },
     });
 
@@ -37,6 +40,7 @@ export class UserDashboardComponent implements OnInit {
     this.auth.getUserEvents().subscribe({
       next: (events: any) => {
         this.myEvents = events;
+        this.cdr.detectChanges();
       },
     });
   }

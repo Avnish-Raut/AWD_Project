@@ -129,15 +129,8 @@ export class AuthService {
   }
 
   async getUserProfile(userId: number) {
-    // Add a quick check to see if userId is actually there
-    if (!userId) {
-      throw new BadRequestException('User ID is missing from the request');
-    }
-
     const user = await this.prisma.user.findUnique({
-      where: {
-        user_id: userId, // Make sure this is NOT 'undefined'
-      },
+      where: { user_id: userId },
       select: {
         user_id: true,
         username: true,
@@ -146,7 +139,12 @@ export class AuthService {
       },
     });
 
-    if (!user) throw new NotFoundException('User not found');
+    console.log('User found in DB:', user);
+
+    if (!user) {
+      throw new NotFoundException('User not found in database');
+    }
+
     return user;
   }
 }
