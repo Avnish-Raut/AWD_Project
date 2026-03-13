@@ -33,7 +33,12 @@ export class EventsController {
     @Query('date_from') dateFrom?: string,
     @Query('date_to') dateTo?: string,
   ) {
-    return this.eventsService.findAllPublished({ search, location, dateFrom, dateTo });
+    return this.eventsService.findAllPublished({
+      search,
+      location,
+      dateFrom,
+      dateTo,
+    });
   }
 
   @Get(':id')
@@ -41,7 +46,7 @@ export class EventsController {
     return this.eventsService.findOne(id);
   }
 
-  // Organizer 
+  // Organizer
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ORG)
@@ -70,10 +75,7 @@ export class EventsController {
   @Patch(':id/publish')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ORG)
-  publish(
-    @Param('id', ParseIntPipe) id: number,
-    @GetUser() user: JwtPayload,
-  ) {
+  publish(@Param('id', ParseIntPipe) id: number, @GetUser() user: JwtPayload) {
     return this.eventsService.publish(id, user.sub);
   }
 
@@ -87,7 +89,7 @@ export class EventsController {
     return this.eventsService.getParticipants(id, user.sub);
   }
 
-  // Participant 
+  // Participant
 
   @Post(':id/register')
   @UseGuards(JwtAuthGuard)
@@ -98,7 +100,7 @@ export class EventsController {
     return this.eventsService.registerParticipant(id, user.sub);
   }
 
-  @Delete(':id/register')
+  @Delete(':id/cancel-registration')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   cancelRegistration(
@@ -108,7 +110,14 @@ export class EventsController {
     return this.eventsService.cancelRegistration(id, user.sub);
   }
 
-  // Organizer OR Admin 
+  @Get('my/user-events')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.USER)
+  findUserEvents(@GetUser() user: JwtPayload) {
+    return this.eventsService.findUserEvents(user.sub);
+  }
+
+  // Organizer OR Admin
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)

@@ -27,7 +27,7 @@ interface ResetPasswordDto {
 })
 export class AuthService {
   private apiUrl = 'http://localhost:3000/api/auth';
-
+  private eventsUrl = 'http://localhost:3000/api/events';
   constructor(private http: HttpClient) {}
 
   register(dto: RegisterDto): Observable<any> {
@@ -61,6 +61,18 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/forgot-password`, {
       email: email,
     });
+  }
+
+  getProfile() {
+    return this.http.get(`${this.apiUrl}/profile`);
+  }
+
+  getUserEvents() {
+    return this.http.get(`${this.eventsUrl}/my/user-events`);
+  }
+
+  cancelRegistration(eventId: number) {
+    return this.http.delete(`${this.eventsUrl}/${eventId}/cancel-registration`);
   }
 
   /**

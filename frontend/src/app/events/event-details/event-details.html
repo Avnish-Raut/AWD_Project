@@ -1,0 +1,50 @@
+<div class="details-wrapper" *ngIf="!loading; else loader">
+  <div class="container" *ngIf="event; else notFound">
+    <button class="btn-back" routerLink="/events">← Back to Browse</button>
+
+    <header class="event-hero">
+      <span class="badge">Upcoming Event</span>
+      <h1>{{ event.title }}</h1>
+      <div class="meta-strip">
+        <span>📍 {{ event.location }}</span>
+        <span>📅 {{ event.event_date | date: 'fullDate' }}</span>
+        <span>👤 Organized by: {{ event.organizer?.username }}</span>
+      </div>
+    </header>
+
+    <div class="grid-layout">
+      <div class="main-info">
+        <h3>About this event</h3>
+        <p class="description">{{ event.description }}</p>
+      </div>
+
+      <aside class="registration-card">
+        <h3>Join Us</h3>
+        <p>
+          Current Registrations: <strong>{{ event._count?.registrations }}</strong>
+        </p>
+
+        <button *ngIf="isAlreadyRegistered()" class="btn-registered" disabled>
+          ✓ Already Registered
+        </button>
+
+        <button
+          *ngIf="!isAlreadyRegistered()"
+          class="btn-register"
+          [disabled]="isProcessing"
+          (click)="register()"
+        >
+          {{ isProcessing ? 'Processing...' : 'Register for Event' }}
+        </button>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<ng-template #loader>
+  <div class="status-msg">Loading event details...</div>
+</ng-template>
+
+<ng-template #notFound>
+  <div class="status-msg">Event not found. It may have been removed.</div>
+</ng-template>

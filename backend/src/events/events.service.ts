@@ -79,13 +79,39 @@ export class EventsService {
     });
   }
 
+  // List events the user is registered for
+  async findUserEvents(userId: number) {
+    return this.prisma.event.findMany({
+      where: {
+        registrations: {
+          some: {
+            user_id: userId,
+            status: 'CONFIRMED',
+          },
+        },
+      },
+      include: {
+        organizer: {
+          select: {
+            username: true,
+          },
+        },
+        _count: {
+          select: { registrations: { where: { status: 'CONFIRMED' } } },
+        },
+      },
+      orderBy: { created_at: 'desc' },
+    });
+  }
   // Get a single event by ID
   async findOne(eventId: number) {
     const event = await this.prisma.event.findUnique({
       where: { event_id: eventId },
       include: {
         organizer: { select: { user_id: true, username: true } },
-        _count: { select: { registrations: true } },
+        _count: {
+          select: { registrations: { where: { status: 'CONFIRMED' } } },
+        },
       },
     });
     if (!event) throw new NotFoundException('Event not found');
@@ -168,8 +194,7 @@ export class EventsService {
 
     if (!event.is_published)
       throw new BadRequestException('Event is not published');
-    if (event.is_cancelled)
-      throw new BadRequestException('Event is cancelled');
+    if (event.is_cancelled) throw new BadRequestException('Event is cancelled');
 
     // R15 — capacity check
     const count = await this.prisma.registration.count({
@@ -202,8 +227,12 @@ export class EventsService {
     const existing = await this.prisma.registration.findUnique({
       where: { user_id_event_id: { user_id: userId, event_id: eventId } },
     });
-    if (!existing || existing.status === 'CANCELLED')
-      throw new NotFoundException('No active registration found');
+
+    // If it doesn't exist at all, that's a real 404
+    if (!existing) throw new NotFoundException('Registration not found');
+
+    // If it's already cancelled, just return the record instead of throwing error
+    if (existing.status === 'CANCELLED') return existing;
 
     return this.prisma.registration.update({
       where: { user_id_event_id: { user_id: userId, event_id: eventId } },

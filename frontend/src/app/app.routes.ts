@@ -10,23 +10,27 @@ import { Dashboard } from './features/admin/dashboard/dashboard';
 import { UserManagement } from './features/admin/user-management/user-management';
 import { EventManagement } from './features/admin/event-management/event-management';
 import { SystemLogs } from './features/admin/system-logs/system-logs';
+import { UserDashboardComponent } from './user-dashboard/user-dashboard';
+import { BrowseEventsComponent } from './events/events';
+import { EventDetailsComponent } from './events/event-details/event-details';
 
 export const routes: Routes = [
   // Public routes
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
-
   { path: 'reset-password', component: ResetPasswordComponent },
-  // Protected routes (canActivate: [authGuard] applied — add components as they are built)
-  // Any logged-in user
-  // { path: 'events', component: EventListComponent, canActivate: [authGuard] },
-  // { path: 'events/:id', component: EventDetailComponent, canActivate: [authGuard] },
-  // { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
 
-  // Organizer only
-  // { path: 'organizer/events', component: OrgEventListComponent, canActivate: [authGuard, rolesGuard(['ORG'])] },
-  // { path: 'organizer/events/create', component: CreateEventComponent, canActivate: [authGuard, rolesGuard(['ORG'])] },
+  // User Dashboard
+  {
+    path: 'user-dashboard',
+    component: UserDashboardComponent,
+    canActivate: [authGuard, rolesGuard(['USER'])],
+  },
+
+  // Any logged-in user events viewing
+  { path: 'events', component: BrowseEventsComponent, canActivate: [authGuard] },
+  { path: 'events/:id', component: EventDetailsComponent, canActivate: [authGuard] },
 
   // Admin only
   {
@@ -46,5 +50,4 @@ export const routes: Routes = [
   { path: '**', redirectTo: 'login' },
 ];
 
-// Re-export guards so other modules can import from one place
 export { authGuard, rolesGuard };

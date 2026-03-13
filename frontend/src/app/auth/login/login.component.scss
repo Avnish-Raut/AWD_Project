@@ -1,10 +1,24 @@
+$primary: #4f46e5;
+$primary-dark: #3730a3;
+$primary-light: #d4d2f9;
+$bg-light: #f9fafb;
+$text-main: #111827;
+$text-muted: #6b7280;
+$white: #ffffff;
+$shadow:
+  0 10px 15px -3px rgba(0, 0, 0, 0.1),
+  0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
 .login-container {
   max-width: 400px;
   margin: 2rem auto;
   padding: 2rem;
   border: 1px solid #ccc;
   border-radius: 10px;
-  background: #f9f9f9;
+  background: linear-gradient(135deg, $primary 0%, $primary-dark 100%);
+  padding: 2.5rem 2rem;
+  color: $white;
+  box-shadow: $shadow;
 
   h2 {
     text-align: center;
@@ -26,6 +40,7 @@
         margin-top: 0.25rem;
         border-radius: 5px;
         border: 1px solid #ccc;
+        background-color: $primary-light;
       }
     }
 
@@ -34,7 +49,7 @@
       padding: 0.5rem;
       border: none;
       background-color: #007bff;
-      color: white;
+      color: rgb(255, 255, 255);
       border-radius: 5px;
       cursor: pointer;
 
@@ -47,9 +62,9 @@
     p {
       margin-top: 1rem;
       text-align: center;
-
+      font-size: large;
       a {
-        color: #007bff;
+        color: $primary-light;
         text-decoration: none;
 
         &:hover {
@@ -60,13 +75,13 @@
   }
 
   .message {
-    color: green;
+    color: #4dff4d;
     text-align: center;
     margin-top: 0.5rem;
   }
 
   .error {
-    color: red;
+    color: #ff4d4d;
     font-size: 0.9rem;
   }
 }

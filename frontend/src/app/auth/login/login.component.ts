@@ -41,7 +41,7 @@ export class LoginComponent {
             if (userRole === 'ADMIN') {
               this.router.navigate(['/admin/dashboard']);
             } else {
-              this.router.navigate(['/events']);
+              this.router.navigate(['/user-dashboard']);
             }
           }, 1000);
         },
