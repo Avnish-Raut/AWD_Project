@@ -3,24 +3,34 @@
   <p>System Overview & Statistics</p>
 </div>
 
-<div class="stats-grid">
+<div *ngIf="loading" class="loading-state">
+  Loading statistics...
+</div>
+
+<div *ngIf="error" class="error-state">
+  {{ error }}
+</div>
+
+<div class="stats-grid" *ngIf="stats">
   <div class="stat-card">
     <h3>Total Users</h3>
-    <div class="stat-value">--</div> <!-- Bind real data here -->
+    <div class="stat-value">{{ stats.totalUsers }}</div>
   </div>
   
   <div class="stat-card">
     <h3>Total Events</h3>
-    <div class="stat-value">--</div> <!-- Bind real data here -->
+    <div class="stat-value">{{ stats.totalEvents }}</div>
   </div>
 
   <div class="stat-card">
     <h3>Active Registrations</h3>
-    <div class="stat-value">--</div> <!-- Bind real data here -->
+    <div class="stat-value">{{ stats.activeRegistrations }}</div>
   </div>
 
   <div class="stat-card">
     <h3>System Alerts</h3>
-    <div class="stat-value text-warning">0</div>
+    <div class="stat-value" [class.text-warning]="stats.systemAlerts > 0">
+      {{ stats.systemAlerts }}
+    </div>
   </div>
 </div>
