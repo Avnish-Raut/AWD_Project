@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UsersService, User } from '../../../core/services/users/users.service';
@@ -21,7 +21,10 @@ export class UserManagement implements OnInit {
   pageSize: number = 10;
   totalUsers: number = 0;
 
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadUsers();
@@ -32,16 +35,24 @@ export class UserManagement implements OnInit {
     const skip = (this.currentPage - 1) * this.pageSize;
     
     this.usersService.getUsers(this.searchQuery, skip, this.pageSize).subscribe({
-      next: (response) => {
-        this.users = response.data;
-        this.totalUsers = response.total;
+      next: (response: any) => {
+        console.log('Received users response:', response);
+        if (Array.isArray(response)) {
+          this.users = response;
+          this.totalUsers = response.length;
+        } else {
+          this.users = response?.data || [];
+          this.totalUsers = response?.total || this.users.length;
+        }
         this.loading = false;
         this.error = null;
+        this.cdr.detectChanges(); // Force angular to update the template
       },
       error: (err) => {
         console.error('Failed to load users', err);
         this.error = 'Failed to load users';
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

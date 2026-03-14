@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StatisticsService, AdminStats } from '../../../core/services/statistics.service';
 
@@ -13,18 +13,23 @@ export class Dashboard implements OnInit {
   loading: boolean = true;
   error: string | null = null;
 
-  constructor(private statisticsService: StatisticsService) {}
+  constructor(
+    private statisticsService: StatisticsService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.statisticsService.getAdminStats().subscribe({
       next: (data) => {
         this.stats = data;
         this.loading = false;
+        this.cdr.detectChanges(); // Force Angular to update the template
       },
       error: (err) => {
         console.error('Failed to load admin stats', err);
         this.error = 'Failed to load dashboard statistics';
         this.loading = false;
+        this.cdr.detectChanges(); // Force Angular to update the template
       }
     });
   }
