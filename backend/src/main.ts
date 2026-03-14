@@ -24,5 +24,18 @@ async function bootstrap() {
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
   console.log(`🚀 Backend running on http://localhost:${port}/api`);
+
+  const uploadsPath = join(process.cwd(), 'uploads');
+
+  console.log('Serving static files from:', uploadsPath);
+  console.log('--- DEBUG: STATIC ASSETS ---');
+  console.log('Current Working Directory:', process.cwd());
+  console.log('Attempting to serve uploads from:', uploadsPath);
+  console.log('---------------------------');
+  app.useStaticAssets(uploadsPath, {
+    prefix: '/uploads', // Remove the trailing slash here to see if it helps
+  });
+
+  app.enableCors();
 }
 bootstrap();
