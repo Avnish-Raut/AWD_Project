@@ -1,0 +1,65 @@
+@import '../user-dashboard/user-dashboard.scss'; // Inherit your layout styles
+
+.org-theme {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+}
+
+.role-badge {
+  background: #f59e0b;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.btn-create {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  &:hover { background: #059669; }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  .stat-card {
+    background: #f1f5f9;
+    padding: 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    
+    .label { color: #64748b; font-size: 0.9rem; }
+    .value { font-size: 1.8rem; font-weight: 800; color: #1e293b; }
+  }
+}
+
+.event-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .attendance {
+        text-align: center;
+        strong { display: block; font-size: 1.2rem; color: #6366f1; }
+    }
+}

@@ -34,9 +34,18 @@ export class LoginComponent {
         next: () => {
           this.message = 'Login successful! Redirecting...';
           this.error = '';
-          // this.cdr.detectChanges();
+
+          // The AuthService.login method uses tap() to save the token.
+          // We now extract the role from that saved token.
+          const role = this.auth.getRole(); 
+
           setTimeout(() => {
-            this.router.navigate(['/user-dashboard']);
+            // Updated to check for 'ORG' instead of 'organization'
+            if (role === 'ORG') {
+              this.router.navigate(['/organizer-dashboard']);
+            } else {
+              this.router.navigate(['/user-dashboard']);
+            }
           }, 1000);
         },
         error: (err) => {
@@ -45,8 +54,6 @@ export class LoginComponent {
           this.cdr.detectChanges();
         },
       });
-    } else {
-      this.error = 'Please enter valid email and password.';
     }
   }
 }

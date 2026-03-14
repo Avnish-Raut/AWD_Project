@@ -1,0 +1,72 @@
+<div class="dashboard-container" *ngIf="!loading; else loader">
+  <header class="dashboard-header org-theme">
+    <div class="header-content">
+      <h1>Organization Portal</h1>
+      <p>Welcome back, {{ user?.username }}</p>
+      <div class="user-meta">
+        <span>📧 {{ user?.email }}</span>
+        <span class="role-badge">ORG ACCOUNT</span>
+      </div>
+    </div>
+    <button class="btn-logout" (click)="logout()">Logout</button>
+  </header>
+
+  <main class="dashboard-content">
+    <div class="section-header">
+      <h2>Managed Events</h2>
+      <button class="btn-create" routerLink="/create-event">
+        <span>+</span> Create New Event
+      </button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="label">Total Events</span>
+        <span class="value">{{ myHostedEvents.length }}</span>
+      </div>
+    </div>
+
+    <div *ngIf="myHostedEvents.length > 0; else noEvents" class="event-list">
+      <div class="event-card org-card" *ngFor="let event of myHostedEvents">
+        <div class="event-info">
+          <strong>{{ event.title }}</strong>
+          <span>📍 {{ event.location }}</span>
+          <span>📅 {{ event.event_date | date:'mediumDate' }}</span>
+        </div>
+        
+        <div class="event-actions">
+          <div class="attendance">
+            <small>Registrations</small>
+            <strong>{{ event._count?.registrations || 0 }}</strong>
+          </div>
+          
+          <div class="button-group">
+            <button class="btn-edit" [routerLink]="['/events', event.event_id]">
+              View
+            </button>
+            
+            <button class="btn-delete" (click)="deleteEvent(event.event_id)">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noEvents>
+      <div class="empty-state">
+        <p>You haven't created any events yet.</p>
+        <button class="btn-primary-large" routerLink="/create-event">
+          Launch Your First Event
+        </button>
+      </div>
+    </ng-template>
+  </main>
+</div>
+
+<ng-template #loader>
+  <div class="loading-spinner-container">
+    <div class="spinner"></div>
+    <p>Initializing Dashboard...</p>
+  </div>
+</ng-template>
