@@ -44,10 +44,7 @@ export class UsersController {
 
   // R34 — Update own profile
   @Patch('me')
-  updateProfile(
-    @GetUser() user: JwtPayload,
-    @Body() dto: UpdateProfileDto,
-  ) {
+  updateProfile(@GetUser() user: JwtPayload, @Body() dto: UpdateProfileDto) {
     return this.usersService.updateProfile(user.sub, dto);
   }
 
@@ -64,7 +61,12 @@ export class UsersController {
           cb(null, dir);
         },
         filename: (req, file, cb) => {
-          const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9) + '-' + file.originalname.replace(/[^a-zA-Z0-9.\-_]/g, '');
+          const uniqueName =
+            Date.now() +
+            '-' +
+            Math.round(Math.random() * 1e9) +
+            '-' +
+            file.originalname.replace(/[^a-zA-Z0-9.\-_]/g, '');
           cb(null, uniqueName);
         },
       }),
@@ -80,11 +82,15 @@ export class UsersController {
     if (!file) throw new BadRequestException('No file uploaded');
 
     const currentUser = await this.usersService.getProfile(user.sub);
-    
-    if (currentUser.avatar_url) {
+    const defaultAvatar = '/uploads/avatars/default-avatar.png';
+
+    // CHANGE HERE: Only delete the old file if it exists AND it's NOT the default one
+    if (currentUser.avatar_url && currentUser.avatar_url !== defaultAvatar) {
       const oldFilePath = path.join(process.cwd(), currentUser.avatar_url);
+
       if (fs.existsSync(oldFilePath)) {
         try {
+          // This safely removes the unique user file, but skips the default-avatar.png
           fs.unlinkSync(oldFilePath);
         } catch (e) {
           console.error(`Failed to delete old avatar file: ${oldFilePath}`, e);
@@ -100,9 +106,10 @@ export class UsersController {
   @Delete('me/avatar')
   async deleteAvatar(@GetUser() user: JwtPayload) {
     const currentUser = await this.usersService.getProfile(user.sub);
-    
-    if (currentUser.avatar_url) {
+    const defaultAvatar = '/uploads/avatars/default-avatar.png';
+    if (currentUser.avatar_url && currentUser.avatar_url !== defaultAvatar) {
       const oldFilePath = path.join(process.cwd(), currentUser.avatar_url);
+
       if (fs.existsSync(oldFilePath)) {
         try {
           fs.unlinkSync(oldFilePath);
@@ -114,7 +121,9 @@ export class UsersController {
 
     // Pass null or empty string to clear the avatar in the DB
     // Assuming updateProfile allows clearing if we update the service
-    return this.usersService.updateProfile(user.sub, { avatar_url: null } as any);
+    return this.usersService.updateProfile(user.sub, {
+      avatar_url: defaultAvatar,
+    } as any);
   }
 
   // R23 — Delete own account

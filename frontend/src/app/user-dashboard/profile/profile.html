@@ -1,0 +1,170 @@
+<div class="profile-wrapper" *ngIf="!loading; else loader">
+  <header class="profile-header">
+    <nav class="top-nav">
+      <button class="btn-back" routerLink="/user-dashboard">← Back to Dashboard</button>
+    </nav>
+    <div class="avatar-container">
+      <div class="avatar-circle">
+        <img
+          *ngIf="user.avatar_url"
+          [src]="'http://localhost:3000' + user.avatar_url"
+          alt="Avatar"
+        />
+        <span *ngIf="!user.avatar_url">{{ user.username?.charAt(0) | uppercase }}</span>
+      </div>
+
+      <div class="avatar-actions">
+        <input
+          type="file"
+          #fileInput
+          (change)="onFileSelected($event)"
+          accept="image/*"
+          style="display: none"
+        />
+
+        <button type="button" class="btn-upload" (click)="fileInput.click()">
+          {{
+            user.avatar_url === '/uploads/avatars/default-avatar.png'
+              ? 'Upload Photo'
+              : 'Change Photo'
+          }}
+        </button>
+
+        <button
+          type="button"
+          class="btn-remove-avatar"
+          *ngIf="user.avatar_url && user.avatar_url !== '/uploads/avatars/default-avatar.png'"
+          (click)="removeAvatar()"
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+    <h1>{{ user.username }}'s Profile</h1>
+    <p class="member-since">Member since {{ user.created_at | date: 'mediumDate' }}</p>
+  </header>
+
+  <form (ngSubmit)="onUpdateProfile()" #profileForm="ngForm">
+    <div class="form-section">
+      <h3>Basic Information</h3>
+
+      <div class="form-group">
+        <label for="username">Username</label>
+
+        <input
+          type="text"
+          id="username"
+          name="username"
+          [(ngModel)]="user.username"
+          required
+          placeholder="Enter username"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="user.email"
+          required
+          placeholder="Enter email"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="avatar">Avatar URL</label>
+        <input
+          type="text"
+          id="avatar"
+          name="avatar"
+          [(ngModel)]="user.avatar_url"
+          placeholder="https://example.com/photo.jpg"
+          disabled="true"
+        />
+      </div>
+    </div>
+
+    <div class="form-section password-section">
+      <h3>Change Password</h3>
+      <p class="section-note">Leave blank if you don't want to change your password.</p>
+
+      <div class="form-group">
+        <label for="current_password">Current Password</label>
+        <input
+          type="password"
+          id="current_password"
+          name="current_password"
+          [(ngModel)]="updateDto.current_password"
+          [required]="!!updateDto.new_password"
+          placeholder="Only if changing password"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="new_password">New Password</label>
+        <input
+          type="password"
+          id="new_password"
+          name="new_password"
+          [(ngModel)]="updateDto.new_password"
+          [attr.minlength]="updateDto.new_password ? 8 : null"
+          placeholder="Min 8 characters"
+        />
+      </div>
+    </div>
+
+    <button type="submit" class="btn-save" [disabled]="!profileForm.valid">Save Changes</button>
+  </form>
+
+  <hr class="divider" />
+
+  <div class="danger-zone">
+    <div class="danger-text">
+      <h3>Deactivate Account</h3>
+      <p>This will disable your account and remove your active event registrations.</p>
+    </div>
+    <button class="btn-delete-trigger" (click)="confirmDelete()">Deactivate</button>
+  </div>
+</div>
+
+<ng-template #loader>
+  <div class="loader-container">
+    <div class="spinner"></div>
+    <p>Fetching your profile...</p>
+  </div>
+</ng-template>
+
+<div class="modal-overlay" *ngIf="showDeleteModal" (click)="showDeleteModal = false">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <span class="warning-icon">⚠️</span>
+      <h2>Are you sure?</h2>
+    </div>
+
+    <p>
+      This action is serious. To confirm you want to deactivate <b>{{ user.email }}</b
+      >, please type <strong>DELETE</strong> below:
+    </p>
+
+    <input
+      type="text"
+      [(ngModel)]="deleteConfirmText"
+      class="confirm-input"
+      placeholder="Type DELETE"
+    />
+
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="showDeleteModal = false">Nevermind</button>
+      <button
+        class="btn-confirm-delete"
+        [disabled]="deleteConfirmText !== 'DELETE'"
+        (click)="executeDelete()"
+      >
+        Confirm Deactivation
+      </button>
+    </div>
+  </div>
+</div>
