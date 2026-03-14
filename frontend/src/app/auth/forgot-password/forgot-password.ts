@@ -2,11 +2,11 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
-
+import { Router, RouterModule } from '@angular/router';
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './forgot-password.html',
   styleUrls: ['./forgot-password.scss'],
 })
@@ -19,6 +19,7 @@ export class ForgotPasswordComponent {
     private fb: FormBuilder,
     private auth: AuthService,
     private cdr: ChangeDetectorRef,
+    private router: Router,
   ) {
     this.forgotForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
