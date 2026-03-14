@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { CalendarOptions } from '@fullcalendar/core';
-import { dayGridPlugin } from '@fullcalendar/daygrid';
-import { interactionPlugin } from '@fullcalendar/interaction';
+import { FullCalendarModule } from '@fullcalendar/angular';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
 
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FullCalendarModule],
   templateUrl: './user-dashboard.html',
   styleUrls: ['./user-dashboard.scss'],
 })
@@ -63,19 +64,23 @@ export class UserDashboardComponent implements OnInit {
         this.cdr.detectChanges();
       },
     });
+    this.loadUserEvents();
   }
 
   loadUserEvents() {
     this.auth.getUserEvents().subscribe({
       next: (events: any) => {
         // Map your backend data to FullCalendar's structure
-        this.calendarOptions.events = events.map((event: { title: any; date: any; id: any }) => ({
-          title: event.title,
-          start: event.date, // Ensure this is a valid ISO string or Date object
-          id: event.id,
-          backgroundColor: '#6366f1', // You can customize colors based on event type
-          borderColor: '#4f46e5',
-        }));
+        this.calendarOptions.events = events.map(
+          (event: { title: any; event_date: any; id: any }) => ({
+            title: event.title,
+            start: event.event_date,
+            id: event.id,
+            backgroundColor: '#6366f1', // You can customize colors based on event type
+            borderColor: '#4f46e5',
+          }),
+        );
+        this.cdr.detectChanges();
       },
       error: (err) => console.error('Could not load events for calendar', err),
     });
