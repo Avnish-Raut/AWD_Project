@@ -13,7 +13,8 @@ import { LogsModule } from './logs/logs.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MailService } from './mail/mail.service';
-
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -27,6 +28,10 @@ import { MailService } from './mail/mail.service';
     LogsModule,
     StatisticsModule,
     NotificationsModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'uploads'),
+      serveRoot: '/uploads', // This makes it available at localhost:3000/uploads
+    }),
   ],
   controllers: [AppController],
   providers: [AppService, MailService],
