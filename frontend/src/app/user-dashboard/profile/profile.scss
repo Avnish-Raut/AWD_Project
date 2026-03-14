@@ -1,0 +1,314 @@
+.profile-wrapper {
+  max-width: 600px;
+  margin: 3rem auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+
+  header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    .avatar-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+
+      .avatar-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .btn-upload {
+        background: #6366f1;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.85rem;
+        &:hover {
+          background: #4f46e5;
+        }
+      }
+
+      .btn-remove-avatar {
+        background: #f1f5f9;
+        color: #ef4444;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        border: 1px solid #fee2e2;
+        cursor: pointer;
+        font-size: 0.85rem;
+        &:hover {
+          background: #fee2e2;
+        }
+      }
+    }
+    .avatar-circle {
+      width: 100px;
+      height: 100px;
+      background: #6366f1;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin: 0 auto 1rem;
+      overflow: hidden;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+    .top-nav {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .btn-back {
+      background: transparent;
+      color: #6366f1; // Matches your primary theme
+      border: 1px solid #6366f1;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &:hover {
+        background: #6366f1;
+        color: white;
+        transform: translateX(-3px); // Subtle "pointing" animation
+      }
+    }
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #1e293b;
+    }
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      &:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+    }
+  }
+
+  .password-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #f1f5f9;
+    h3 {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+  }
+
+  .btn-save {
+    width: 100%;
+    padding: 1rem;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    &:hover {
+      background: #4f46e5;
+    }
+  }
+
+  .btn-delete {
+    margin-top: 2rem;
+    width: 100%;
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 0.9rem;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  .divider {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 2.5rem 0;
+  }
+
+  .danger-zone {
+    background-color: #fff5f5; // Very light red background
+    border: 1px solid #feb2b2;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+
+    .danger-text {
+      h3 {
+        color: #c53030; // Dark red
+        margin: 0 0 0.25rem 0;
+        font-size: 1.1rem;
+      }
+      p {
+        color: #718096;
+        font-size: 0.9rem;
+        margin: 0;
+      }
+    }
+
+    .btn-delete-trigger {
+      background-color: #c53030;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      &:hover {
+        background-color: #9b2c2c;
+      }
+    }
+  }
+}
+
+// --- Modal Overlay ---
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); // Dim background
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px); // Modern blur effect
+}
+
+// --- Modal Content ---
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+
+  .modal-header {
+    margin-bottom: 1.5rem;
+
+    .warning-icon {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      margin: 0;
+      color: #1a202c;
+      font-size: 1.5rem;
+    }
+  }
+
+  p {
+    color: #4a5568;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+
+    b,
+    strong {
+      color: #2d3748;
+    }
+  }
+
+  .confirm-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: #c53030;
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 1rem;
+
+    button {
+      flex: 1;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-cancel {
+      background: #edf2f7;
+      border: none;
+      color: #4a5568;
+
+      &:hover {
+        background: #e2e8f0;
+      }
+    }
+
+    .btn-confirm-delete {
+      background: #c53030;
+      border: none;
+      color: white;
+
+      &:disabled {
+        background: #feb2b2;
+        cursor: not-allowed;
+      }
+
+      &:not(:disabled):hover {
+        background: #9b2c2c;
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .danger-zone {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+}
