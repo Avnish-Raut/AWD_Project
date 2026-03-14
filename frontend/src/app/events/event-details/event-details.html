@@ -1,9 +1,11 @@
 <div class="details-wrapper" *ngIf="!loading; else loader">
   <div class="container" *ngIf="event; else notFound">
-    <button class="btn-back" routerLink="/events">← Back to Browse</button>
+    <button class="btn-back" (click)="goBack()">← Back to Dashboard</button>
 
     <header class="event-hero">
-      <span class="badge">Upcoming Event</span>
+      <span class="badge" [class.cancelled]="event.is_cancelled">
+        {{ event.is_cancelled ? 'Cancelled' : 'Upcoming Event' }}
+      </span>
       <h1>{{ event.title }}</h1>
       <div class="meta-strip">
         <span>📍 {{ event.location }}</span>
@@ -18,7 +20,7 @@
         <p class="description">{{ event.description }}</p>
       </div>
 
-      <aside class="registration-card">
+      <aside class="registration-card" *ngIf="userRole === 'USER'">
         <h3>Join Us</h3>
         <p>
           Current Registrations: <strong>{{ event._count?.registrations }}</strong>
@@ -36,6 +38,11 @@
         >
           {{ isProcessing ? 'Processing...' : 'Register for Event' }}
         </button>
+      </aside>
+
+      <aside class="registration-card admin-view" *ngIf="userRole === 'ORG'">
+        <h3>Event Management</h3>
+        <p>Total Participants: <strong>{{ event._count?.registrations }}</strong></p>
       </aside>
     </div>
   </div>
