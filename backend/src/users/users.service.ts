@@ -110,7 +110,7 @@ export class UsersService {
   // ─── R25: Admin – list all users ──────────────────────────────────────────
 
   async findAll(search?: string, skip?: number, take?: number) {
-    const whereCondition = search
+    const whereCondition: any = search
       ? {
           OR: [
             { username: { contains: search, mode: 'insensitive' } },
