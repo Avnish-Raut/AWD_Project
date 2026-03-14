@@ -29,7 +29,14 @@
       </div>
       <button class="btn-browse" routerLink="/events">🔍 Find More Events</button>
     </div>
-
+    <div class="dashboard-container">
+      <section class="calendar-section">
+        <h2>Your Event Schedule</h2>
+        <div class="calendar-card">
+          <full-calendar [options]="calendarOptions"></full-calendar>
+        </div>
+      </section>
+    </div>
     <ng-template #noEvents>
       <p style="color: #6b7280; text-align: center; margin-top: 2rem">
         You haven't registered for any events yet.
