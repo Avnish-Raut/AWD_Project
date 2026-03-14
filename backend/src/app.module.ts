@@ -14,10 +14,15 @@ import { StatisticsModule } from './statistics/statistics.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MailService } from './mail/mail.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ScheduleModule } from '@nestjs/schedule';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { join } from 'path';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
+    EventEmitterModule.forRoot(),
     PrismaModule,
     AuthModule,
     UsersModule,
