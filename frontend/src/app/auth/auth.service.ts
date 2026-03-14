@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment.development';
 
 interface RegisterDto {
   username: string;
@@ -26,8 +27,8 @@ interface ResetPasswordDto {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api/auth';
-  private eventsUrl = 'http://localhost:3000/api/events';
+  private apiUrl = `${environment.apiUrl}/auth`;
+  private eventsUrl = `${environment.apiUrl}/events`;
   constructor(private http: HttpClient) {}
 
   register(dto: RegisterDto): Observable<any> {
