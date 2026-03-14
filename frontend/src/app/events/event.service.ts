@@ -42,4 +42,8 @@ export class EventService {
   registerForEvent(eventId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/${eventId}/register`, { event_id: eventId });
   }
+
+  getParticipants(eventId: number) {
+  return this.http.get<any[]>(`http://localhost:3000/api/events/${eventId}/participants`);
+  }
 }

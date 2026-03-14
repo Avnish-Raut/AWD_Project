@@ -11,6 +11,7 @@ import { BrowseEventsComponent } from './events/events';
 import { EventDetailsComponent } from './events/event-details/event-details';
 import { CreateEventComponent } from './events/create-event/create-event';
 import { ProfileComponent } from './user-dashboard/profile/profile';
+import { ParticipantListComponent } from './events/participant-list/participant-list';
 
 export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
@@ -32,25 +33,26 @@ export const routes: Routes = [
     canActivate: [authGuard, rolesGuard(['ORG'])],
   },
 
-  // ADDED: Create Event Route
+  // Organizer: Create Event
   {
     path: 'create-event',
     component: CreateEventComponent,
     canActivate: [authGuard, rolesGuard(['ORG'])],
   },
 
+  // Participant List (Organizer Only)
+  { 
+    path: 'events/:id/participants', 
+    component: ParticipantListComponent, 
+    canActivate: [authGuard, rolesGuard(['ORG'])] 
+  },
+
+  // General Protected Routes
   { path: 'events', component: BrowseEventsComponent, canActivate: [authGuard] },
   { path: 'events/:id', component: EventDetailsComponent, canActivate: [authGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
 
-  // Organizer only
-  // { path: 'organizer/events', component: OrgEventListComponent, canActivate: [authGuard, rolesGuard(['ORG'])] },
-  // { path: 'organizer/events/create', component: CreateEventComponent, canActivate: [authGuard, rolesGuard(['ORG'])] },
-
-  // Admin only
-  // { path: 'admin/users', component: AdminUsersComponent, canActivate: [authGuard, rolesGuard(['ADMIN'])] },
-  // { path: 'admin/logs', component: AdminLogsComponent, canActivate: [authGuard, rolesGuard(['ADMIN'])] },
-
+  // Default Redirects
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];

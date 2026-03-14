@@ -59,6 +59,9 @@
         <h3>Event Management</h3>
         <p>Total Participants: <strong>{{ event._count?.registrations }}</strong></p>
         <div class="action-buttons">
+          <button class="btn-view-participants" [routerLink]="['/events', event.event_id, 'participants']">
+            👥 View Participant List
+          </button>
           <button *ngIf="!isEditing" class="btn-edit" (click)="startEdit()">✏️ Edit</button>
           <div *ngIf="isEditing">
             <button class="btn-save" (click)="saveEdit()" [disabled]="isProcessing">💾 Save</button>
