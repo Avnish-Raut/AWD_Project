@@ -7,7 +7,6 @@ export class EventService {
   private apiUrl = 'http://localhost:3000/api/events';
 
   constructor(private http: HttpClient) {}
-
   getPublishedEvents(filters: any): Observable<any[]> {
     let params = new HttpParams();
     if (filters.search) params = params.append('search', filters.search);
@@ -17,19 +16,18 @@ export class EventService {
 
     return this.http.get<any[]>(this.apiUrl, { params });
   }
-
   getOrgEvents(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/managed`);
+    return this.http.get<any[]>(`${this.apiUrl}/my/events`);
   }
-
+  createEvent(eventData: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, eventData);
+  }
   deleteEvent(eventId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${eventId}`);
   }
-
   getEventById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
-
   registerForEvent(eventId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/${eventId}/register`, { event_id: eventId });
   }

@@ -6,9 +6,10 @@ import { rolesGuard } from './core/guards/roles.guard';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard';
-import { OrganizerDashboardComponent } from './organizer-dashboard/organizer-dashboard'; // Added
+import { OrganizerDashboardComponent } from './organizer-dashboard/organizer-dashboard';
 import { BrowseEventsComponent } from './events/events';
 import { EventDetailsComponent } from './events/event-details/event-details';
+import { CreateEventComponent } from './events/create-event/create-event';
 
 export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
@@ -23,10 +24,17 @@ export const routes: Routes = [
     canActivate: [authGuard, rolesGuard(['USER'])],
   },
 
-  // Organizer Dashboard - Added and updated to 'ORG'
+  // Organizer Dashboard
   {
     path: 'organizer-dashboard',
     component: OrganizerDashboardComponent,
+    canActivate: [authGuard, rolesGuard(['ORG'])],
+  },
+
+  // ADDED: Create Event Route
+  {
+    path: 'create-event',
+    component: CreateEventComponent,
     canActivate: [authGuard, rolesGuard(['ORG'])],
   },
 

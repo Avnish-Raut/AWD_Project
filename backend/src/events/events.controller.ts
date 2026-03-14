@@ -26,6 +26,7 @@ import { Role } from '@prisma/client';
 export class EventsController {
   constructor(private eventsService: EventsService) {}
 
+  // --- PUBLIC ROUTES ---
   @Get()
   findAll(
     @Query('search') search?: string,
@@ -41,24 +42,34 @@ export class EventsController {
     });
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.eventsService.findOne(id);
-  }
-
-  // Organizer
-  @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ORG)
-  create(@Body() dto: CreateEventDto, @GetUser() user: JwtPayload) {
-    return this.eventsService.create(dto, user.sub);
-  }
+  // --- STATIC ORGANIZER/USER ROUTES (Must be above :id) ---
 
   @Get('my/events')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ORG)
   findMyEvents(@GetUser() user: JwtPayload) {
     return this.eventsService.findMyEvents(user.sub);
+  }
+
+  @Get('my/user-events')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.USER)
+  findUserEvents(@GetUser() user: JwtPayload) {
+    return this.eventsService.findUserEvents(user.sub);
+  }
+
+  // --- DYNAMIC ROUTES ---
+
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.eventsService.findOne(id);
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ORG)
+  create(@Body() dto: CreateEventDto, @GetUser() user: JwtPayload) {
+    return this.eventsService.create(dto, user.sub);
   }
 
   @Patch(':id')
@@ -89,8 +100,6 @@ export class EventsController {
     return this.eventsService.getParticipants(id, user.sub);
   }
 
-  // Participant
-
   @Post(':id/register')
   @UseGuards(JwtAuthGuard)
   registerForEvent(
@@ -109,15 +118,6 @@ export class EventsController {
   ) {
     return this.eventsService.cancelRegistration(id, user.sub);
   }
-
-  @Get('my/user-events')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.USER)
-  findUserEvents(@GetUser() user: JwtPayload) {
-    return this.eventsService.findUserEvents(user.sub);
-  }
-
-  // Organizer OR Admin
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)

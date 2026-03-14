@@ -13,7 +13,7 @@ import { EventService } from '../events/event.service';
 })
 export class OrganizerDashboardComponent implements OnInit {
   user: any = null;
-  myHostedEvents: any[] = []; // Matches your HTML
+  myHostedEvents: any[] = [];
   loading = true;
 
   constructor(

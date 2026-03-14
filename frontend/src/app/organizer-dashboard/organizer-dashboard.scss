@@ -1,4 +1,4 @@
-@import '../user-dashboard/user-dashboard.scss'; // Inherit your layout styles
+@use '../user-dashboard/user-dashboard.scss'; 
 
 .org-theme {
   background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
@@ -31,6 +31,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: background 0.2s ease;
   
   &:hover { background: #059669; }
 }
@@ -54,12 +55,56 @@
 }
 
 .event-actions {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
 
-    .attendance {
-        text-align: center;
-        strong { display: block; font-size: 1.2rem; color: #6366f1; }
-    }
+  .attendance {
+    text-align: center;
+    margin-right: 10px;
+    strong { display: block; font-size: 1.2rem; color: #6366f1; }
+    small { color: #64748b; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.5px; }
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 10px;
+  }
+
+  button {
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+  }
+
+  .btn-edit {
+    background: #6366f1;
+    color: white;
+    &:hover { background: #4f46e5; transform: translateY(-1px); }
+  }
+
+  .btn-delete {
+    background: #ef4444;
+    color: white;
+    &:hover { background: #dc2626; transform: translateY(-1px); }
+  }
+}
+.event-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
 }

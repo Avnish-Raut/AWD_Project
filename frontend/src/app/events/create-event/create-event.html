@@ -1,0 +1,47 @@
+<div class="create-event-container">
+  <div class="form-card">
+    <header>
+      <h2>Launch New Event</h2>
+      <p>Fill in the details to publish your event to the community.</p>
+    </header>
+
+    <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label>Event Title</label>
+        <input type="text" formControlName="title" placeholder="e.g. Tech Conference 2026">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" formControlName="location" placeholder="City or Online">
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="datetime-local" formControlName="event_date">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea formControlName="description" rows="4" placeholder="What is this event about?"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Max Capacity</label>
+        <input type="number" formControlName="capacity">
+      </div>
+
+      <div class="error-banner" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn-cancel" routerLink="/organizer-dashboard">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="eventForm.invalid || submitting">
+          {{ submitting ? 'Publishing...' : 'Create Event' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
