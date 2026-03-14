@@ -3,9 +3,42 @@
     <nav class="top-nav">
       <button class="btn-back" routerLink="/user-dashboard">← Back to Dashboard</button>
     </nav>
-    <div class="avatar-circle">
-      <img *ngIf="user.avatar_url" [src]="'http://localhost:3000' + user.avatar_url" alt="Avatar" />
-      <span *ngIf="!user.avatar_url">{{ user.username?.charAt(0) | uppercase }}</span>
+    <div class="avatar-container">
+      <div class="avatar-circle">
+        <img
+          *ngIf="user.avatar_url"
+          [src]="'http://localhost:3000' + user.avatar_url"
+          alt="Avatar"
+        />
+        <span *ngIf="!user.avatar_url">{{ user.username?.charAt(0) | uppercase }}</span>
+      </div>
+
+      <div class="avatar-actions">
+        <input
+          type="file"
+          #fileInput
+          (change)="onFileSelected($event)"
+          accept="image/*"
+          style="display: none"
+        />
+
+        <button type="button" class="btn-upload" (click)="fileInput.click()">
+          {{
+            user.avatar_url === '/uploads/avatars/default-avatar.png'
+              ? 'Upload Photo'
+              : 'Change Photo'
+          }}
+        </button>
+
+        <button
+          type="button"
+          class="btn-remove-avatar"
+          *ngIf="user.avatar_url && user.avatar_url !== '/uploads/avatars/default-avatar.png'"
+          (click)="removeAvatar()"
+        >
+          Remove
+        </button>
+      </div>
     </div>
     <h1>{{ user.username }}'s Profile</h1>
     <p class="member-since">Member since {{ user.created_at | date: 'mediumDate' }}</p>
@@ -49,6 +82,7 @@
           name="avatar"
           [(ngModel)]="user.avatar_url"
           placeholder="https://example.com/photo.jpg"
+          disabled="true"
         />
       </div>
     </div>

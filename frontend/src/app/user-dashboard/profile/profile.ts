@@ -112,4 +112,41 @@ export class ProfileComponent implements AfterViewInit {
       });
     }
   }
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.loading = true;
+      this.userService.uploadAvatar(file).subscribe({
+        next: (updatedUser) => {
+          this.user.avatar_url = updatedUser.avatar_url;
+          this.loading = false;
+          alert('Avatar uploaded successfully!');
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.loading = false;
+          alert(err.error?.message || 'Upload failed');
+          this.cdr.detectChanges();
+        },
+      });
+    }
+  }
+
+  removeAvatar() {
+    if (confirm('Are you sure you want to remove your profile picture?')) {
+      this.userService.deleteAvatar().subscribe({
+        next: (updatedUser) => {
+          this.user.avatar_url = null;
+          alert('Avatar removed.');
+          this.cdr.detectChanges();
+          this.reloadPage();
+        },
+        error: (err) => {
+          alert('Delete failed');
+          this.cdr.detectChanges();
+        },
+      });
+    }
+  }
 }

@@ -68,13 +68,13 @@ export class UserDashboardComponent implements OnInit {
         },
         error: (err) => {
           this.cancellingId = null;
-          console.error(err);
+          // console.error(err);
           this.cdr.detectChanges();
         },
       });
     } else {
       // User clicked 'Cancel' in the alert box
-      console.log('Cancellation aborted by user.');
+      //console.log('Cancellation aborted by user.');
       this.cdr.detectChanges();
     }
   }
