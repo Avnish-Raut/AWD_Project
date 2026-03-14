@@ -4,6 +4,7 @@ import { EventService } from '../../events/event.service';
 import { AuthService } from '../../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http'; // Added
 
 @Component({
   selector: 'app-event-details',
@@ -18,8 +19,8 @@ export class EventDetailsComponent implements OnInit {
   loading = true;
   isProcessing = false;
   userRole: string | null = null;
+  selectedFile: File | null = null; // Added
 
-  // EDIT STATE
   isEditing = false;
   editForm: any = {};
 
@@ -29,14 +30,13 @@ export class EventDetailsComponent implements OnInit {
     private eventService: EventService,
     private auth: AuthService,
     private cdr: ChangeDetectorRef,
+    private http: HttpClient // Injected
   ) {}
 
   ngOnInit() {
     this.userRole = this.auth.getRole();
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadData(id);
-    }
+    if (id) this.loadData(id);
   }
 
   loadData(eventId: string) {
@@ -53,6 +53,10 @@ export class EventDetailsComponent implements OnInit {
     }
   }
 
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
+  }
+
   startEdit() {
     this.isEditing = true;
     this.editForm = { ...this.event };
@@ -63,55 +67,49 @@ export class EventDetailsComponent implements OnInit {
 
   cancelEdit() {
     this.isEditing = false;
-    this.editForm = {};
+    this.selectedFile = null;
   }
 
   saveEdit() {
     this.isProcessing = true;
     this.eventService.updateEvent(this.event.event_id, this.editForm).subscribe({
       next: (updated) => {
-        this.event = updated;
-        this.isEditing = false;
-        this.isProcessing = false;
-        this.router.navigate(['/organizer-dashboard']);
-        this.cdr.detectChanges();
+        if (this.selectedFile) {
+          const formData = new FormData();
+          formData.append('file', this.selectedFile);
+          this.http.post(`http://localhost:3000/api/events/${this.event.event_id}/upload`, formData)
+            .subscribe({
+              next: () => this.finishSave(),
+              error: () => { alert('Details saved, but file upload failed.'); this.finishSave(); }
+            });
+        } else {
+          this.finishSave();
+        }
       },
-      error: (err) => {
-        console.error('Update failed', err);
-        alert('Failed to update event.');
-        this.isProcessing = false;
-        this.cdr.detectChanges();
-      }
+      error: () => { alert('Update failed'); this.isProcessing = false; }
     });
   }
 
+  finishSave() {
+    this.isProcessing = false;
+    this.isEditing = false;
+    this.router.navigate(['/organizer-dashboard']);
+  }
+
   isAlreadyRegistered(): boolean {
-    if (!this.event || !this.myEvents) return false;
-    return this.myEvents.some((e) => e.event_id === this.event.event_id);
+    return this.myEvents.some((e) => e.event_id === this.event?.event_id);
   }
 
   register() {
-    if (this.userRole !== 'USER') return;
     this.isProcessing = true;
-    this.eventService.registerForEvent(this.event.event_id).subscribe({
-      next: () => {
-        alert('Registration Successful!');
-        this.loadData(this.event.event_id.toString());
-        this.isProcessing = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.isProcessing = false;
-        this.cdr.detectChanges();
-      },
+    this.eventService.registerForEvent(this.event.event_id).subscribe(() => {
+      alert('Registered!');
+      this.loadData(this.event.event_id.toString());
+      this.isProcessing = false;
     });
   }
 
   goBack() {
-    if (this.userRole === 'ORG') {
-      this.router.navigate(['/organizer-dashboard']);
-    } else {
-      this.router.navigate(['/user-dashboard']);
-    }
+    this.router.navigate([this.userRole === 'ORG' ? '/organizer-dashboard' : '/user-dashboard']);
   }
 }

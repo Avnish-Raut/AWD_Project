@@ -14,10 +14,10 @@ import { UpdateEventDto } from './dto/update-event.dto';
 export class EventsService {
   constructor(
     private prisma: PrismaService,
-    private mailService: MailService, // Injected MailService
+    private mailService: MailService,
   ) {}
 
-  // R11 — Create event (Organizer only)
+  // R11 — Create event
   async create(dto: CreateEventDto, organizerId: number) {
     return this.prisma.event.create({
       data: {
@@ -109,11 +109,13 @@ export class EventsService {
     });
   }
 
+  // UPDATED: Added documents to include
   async findOne(eventId: number) {
     const event = await this.prisma.event.findUnique({
       where: { event_id: eventId },
       include: {
         organizer: { select: { user_id: true, username: true } },
+        documents: true, // <--- ADD THIS LINE
         _count: {
           select: { registrations: { where: { status: 'CONFIRMED' } } },
         },
@@ -122,8 +124,25 @@ export class EventsService {
     if (!event) throw new NotFoundException('Event not found');
     return event;
   }
+
+  // NEW METHOD: Handle the database record for the file
+  async addDocument(eventId: number, userId: number, file: Express.Multer.File) {
+    const event = await this.findOne(eventId);
+    if (event.organizer_id !== userId)
+      throw new ForbiddenException('You can only upload files to your own events');
+
+    return this.prisma.document.create({
+      data: {
+        event_id: eventId,
+        uploaded_by: userId,
+        file_name: file.originalname,
+        file_path: `/uploads/documents/${file.filename}`,
+        file_size_kb: Math.round(file.size / 1024),
+      },
+    });
+  }
   
-  // R30 — Update event details + Email Notification
+  // R30 — Update event details
   async update(eventId: number, dto: UpdateEventDto, userId: number) {
     const event = await this.findOne(eventId);
     if (event.organizer_id !== userId)
@@ -144,9 +163,7 @@ export class EventsService {
       },
     });
 
-    // Notify participants of changes
     await this.notifyParticipants(eventId, event.title, 'update');
-
     return updatedEvent;
   }
 
@@ -166,13 +183,10 @@ export class EventsService {
       data: { is_cancelled: true, is_published: false },
     });
 
-    // Notify participants of cancellation
     await this.notifyParticipants(eventId, event.title, 'cancel');
-
     return cancelledEvent;
   }
 
-  //Helper to fetch confirmed users and send emails
   private async notifyParticipants(eventId: number, title: string, type: 'update' | 'cancel') {
     const registrations = await this.prisma.registration.findMany({
       where: { event_id: eventId, status: 'CONFIRMED' },
@@ -188,7 +202,6 @@ export class EventsService {
     }
   }
 
-  // Publish event
   async publish(eventId: number, userId: number) {
     const event = await this.findOne(eventId);
     if (event.organizer_id !== userId)
@@ -229,6 +242,7 @@ export class EventsService {
     const existing = await this.prisma.registration.findUnique({
       where: { user_id_event_id: { user_id: userId, event_id: eventId } },
     });
+    
     if (existing) {
       if (existing.status === 'CONFIRMED')
         throw new ConflictException('Already registered for this event');
