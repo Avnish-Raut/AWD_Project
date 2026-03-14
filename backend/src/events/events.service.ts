@@ -13,6 +13,7 @@ import { UpdateEventDto } from './dto/update-event.dto';
 export class EventsService {
   constructor(private prisma: PrismaService) {}
 
+  // R11 — Create event (Organizer only)
   async create(dto: CreateEventDto, organizerId: number) {
     return this.prisma.event.create({
       data: {
@@ -26,6 +27,7 @@ export class EventsService {
     });
   }
 
+  // R13 + R33 — List all published events with optional search, location, and date range filters
   async findAllPublished(filters?: {
     search?: string;
     location?: string;
@@ -66,7 +68,6 @@ export class EventsService {
     });
   }
 
-  // UPDATED: Now filters out cancelled events so they don't reappear on the dashboard
   async findMyEvents(organizerId: number) {
     return this.prisma.event.findMany({
       where: { 
@@ -117,7 +118,8 @@ export class EventsService {
     if (!event) throw new NotFoundException('Event not found');
     return event;
   }
-
+  
+  // R30 — Update event details (Organizer, own event only)
   async update(eventId: number, dto: UpdateEventDto, userId: number) {
     const event = await this.findOne(eventId);
     if (event.organizer_id !== userId)
@@ -139,6 +141,7 @@ export class EventsService {
     });
   }
 
+  // Publish event (Organizer, own event)
   async publish(eventId: number, userId: number) {
     const event = await this.findOne(eventId);
     if (event.organizer_id !== userId)
@@ -152,6 +155,7 @@ export class EventsService {
     });
   }
 
+  // R21 — Cancel event (Organizer cancels own, Admin cancels any)
   async cancel(eventId: number, userId: number, userRole: string) {
     const event = await this.findOne(eventId);
     if (event.is_cancelled)
@@ -168,6 +172,7 @@ export class EventsService {
     });
   }
 
+  // R24 — Participant list for an event (Organizer of that event only)
   async getParticipants(eventId: number, userId: number) {
     const event = await this.findOne(eventId);
     if (event.organizer_id !== userId)
@@ -184,6 +189,7 @@ export class EventsService {
     });
   }
 
+  // R14 — Register participant to event (checks R15 capacity)
   async registerParticipant(eventId: number, userId: number) {
     const event = await this.findOne(eventId);
 
@@ -191,18 +197,21 @@ export class EventsService {
       throw new BadRequestException('Event is not published');
     if (event.is_cancelled) throw new BadRequestException('Event is cancelled');
 
+    // R15 — capacity check
     const count = await this.prisma.registration.count({
       where: { event_id: eventId, status: 'CONFIRMED' },
     });
     if (count >= event.capacity)
       throw new BadRequestException('Event is fully booked');
 
+    // guard against duplicate registration
     const existing = await this.prisma.registration.findUnique({
       where: { user_id_event_id: { user_id: userId, event_id: eventId } },
     });
     if (existing) {
       if (existing.status === 'CONFIRMED')
         throw new ConflictException('Already registered for this event');
+      // re-register after cancellation
       return this.prisma.registration.update({
         where: { user_id_event_id: { user_id: userId, event_id: eventId } },
         data: { status: 'CONFIRMED' },
@@ -214,6 +223,7 @@ export class EventsService {
     });
   }
 
+  // R12 — Cancel own registration
   async cancelRegistration(eventId: number, userId: number) {
     const existing = await this.prisma.registration.findUnique({
       where: { user_id_event_id: { user_id: userId, event_id: eventId } },

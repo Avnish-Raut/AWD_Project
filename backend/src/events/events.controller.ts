@@ -90,6 +90,7 @@ export class EventsController {
     return this.eventsService.publish(id, user.sub);
   }
 
+  //Participant or User
   @Get(':id/participants')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ORG)
@@ -119,6 +120,7 @@ export class EventsController {
     return this.eventsService.cancelRegistration(id, user.sub);
   }
 
+  // Organizer OR Admin
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ORG, Role.ADMIN)
