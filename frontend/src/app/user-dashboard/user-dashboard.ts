@@ -2,6 +2,9 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
+import { CalendarOptions } from '@fullcalendar/core';
+import { dayGridPlugin } from '@fullcalendar/daygrid';
+import { interactionPlugin } from '@fullcalendar/interaction';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -11,6 +14,19 @@ import { AuthService } from '../auth/auth.service';
   styleUrls: ['./user-dashboard.scss'],
 })
 export class UserDashboardComponent implements OnInit {
+  calendarOptions: CalendarOptions = {
+    initialView: 'dayGridMonth',
+    plugins: [dayGridPlugin, interactionPlugin],
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,dayGridWeek',
+    },
+    events: [], // We will fill this from the API
+    eventClick: this.handleEventClick.bind(this),
+    height: 'auto',
+  };
+
   user: any = null;
   myEvents: any[] = [];
 
@@ -47,6 +63,28 @@ export class UserDashboardComponent implements OnInit {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  loadUserEvents() {
+    this.auth.getUserEvents().subscribe({
+      next: (events: any) => {
+        // Map your backend data to FullCalendar's structure
+        this.calendarOptions.events = events.map((event: { title: any; date: any; id: any }) => ({
+          title: event.title,
+          start: event.date, // Ensure this is a valid ISO string or Date object
+          id: event.id,
+          backgroundColor: '#6366f1', // You can customize colors based on event type
+          borderColor: '#4f46e5',
+        }));
+      },
+      error: (err) => console.error('Could not load events for calendar', err),
+    });
+  }
+
+  handleEventClick(arg: any) {
+    alert('Event: ' + arg.event.title);
+    // You could navigate to event details here:
+    // this.router.navigate(['/events', arg.event.id]);
   }
 
   cancelRegistration(eventId: number) {

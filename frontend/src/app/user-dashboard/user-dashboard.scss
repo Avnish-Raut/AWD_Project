@@ -111,6 +111,42 @@ $shadow:
       }
     }
   }
+  .calendar-section {
+    margin: 2rem 0;
+
+    h2 {
+      margin-bottom: 1rem;
+      color: #1a202c;
+    }
+  }
+
+  .calendar-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+
+    // Customizing FullCalendar internal styles
+    :host ::v-deep {
+      .fc-header-toolbar {
+        margin-bottom: 1.5rem;
+      }
+      .fc-button-primary {
+        background-color: #6366f1;
+        border-color: #6366f1;
+
+        &:hover {
+          background-color: #4f46e5;
+        }
+      }
+      .fc-daygrid-event {
+        cursor: pointer;
+        border-radius: 4px;
+        padding: 2px 4px;
+      }
+    }
+  }
 }
 
 .section-header {
