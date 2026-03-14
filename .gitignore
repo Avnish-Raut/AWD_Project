@@ -330,8 +330,7 @@ planning/
 .clj-kondo/
 .lsp/
 
-#uploaded files
-backend/uploads/
+
 
 # Allow NestJS source modules named 'logs' (overrides the Node 'logs' rule above)
 !backend/src/logs/

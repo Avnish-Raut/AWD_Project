@@ -1,6 +1,8 @@
 <div class="dashboard-container" *ngIf="user; else loading">
   <header class="dashboard-header">
-    <h1>Welcome, {{ user.username }}!</h1>
+    <h1>
+      Welcome, <a [routerLink]="['/profile']">{{ user.username }}!</a>
+    </h1>
     <div class="user-meta">
       <span> {{ user.email }}</span>
       <span> Role: {{ user.role }}</span>
