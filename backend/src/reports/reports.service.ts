@@ -6,10 +6,14 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ReportStatus } from '@prisma/client';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class ReportService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   /**
    * R18 – Create report request
@@ -65,6 +69,8 @@ export class ReportService {
       where: { report_id: reportId },
       data: { status: ReportStatus.IN_PROGRESS },
     });
+    
+    this.eventEmitter.emit(`report.progress.${reportId}`, { progress: 0, status: 'IN_PROGRESS' });
 
     for (let percent = 10; percent <= 100; percent += 10) {
       await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -73,6 +79,8 @@ export class ReportService {
         where: { report_id: reportId },
         data: { progress_percent: percent },
       });
+      
+      this.eventEmitter.emit(`report.progress.${reportId}`, { progress: percent, status: 'IN_PROGRESS' });
     }
 
     // Fetch registrations to calculate analytics
@@ -115,6 +123,8 @@ export class ReportService {
         },
       },
     });
+    
+    this.eventEmitter.emit(`report.progress.${reportId}`, { progress: 100, status: 'DONE' });
   }
 
   /**
