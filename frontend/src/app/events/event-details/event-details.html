@@ -6,7 +6,10 @@
       <span class="badge" [class.cancelled]="event.is_cancelled">
         {{ event.is_cancelled ? 'Cancelled' : 'Upcoming Event' }}
       </span>
-      <h1>{{ event.title }}</h1>
+      
+      <h1 *ngIf="!isEditing">{{ event.title }}</h1>
+      <input *ngIf="isEditing" type="text" [(ngModel)]="editForm.title" class="edit-title-input">
+
       <div class="meta-strip">
         <span>📍 {{ event.location }}</span>
         <span>📅 {{ event.event_date | date: 'fullDate' }}</span>
@@ -17,25 +20,31 @@
     <div class="grid-layout">
       <div class="main-info">
         <h3>About this event</h3>
-        <p class="description">{{ event.description }}</p>
+        
+        <div *ngIf="!isEditing">
+          <p class="description">{{ event.description }}</p>
+        </div>
+
+        <div *ngIf="isEditing" class="edit-fields">
+          <label>Location</label>
+          <input type="text" [(ngModel)]="editForm.location" class="form-control">
+
+          <label>Event Date</label>
+          <input type="date" [(ngModel)]="editForm.event_date" class="form-control">
+
+          <label>Description</label>
+          <textarea [(ngModel)]="editForm.description" rows="5" class="form-control"></textarea>
+          
+          <label>Capacity</label>
+          <input type="number" [(ngModel)]="editForm.capacity" class="form-control">
+        </div>
       </div>
 
       <aside class="registration-card" *ngIf="userRole === 'USER'">
         <h3>Join Us</h3>
-        <p>
-          Current Registrations: <strong>{{ event._count?.registrations }}</strong>
-        </p>
-
-        <button *ngIf="isAlreadyRegistered()" class="btn-registered" disabled>
-          ✓ Already Registered
-        </button>
-
-        <button
-          *ngIf="!isAlreadyRegistered()"
-          class="btn-register"
-          [disabled]="isProcessing"
-          (click)="register()"
-        >
+        <p>Current Registrations: <strong>{{ event._count?.registrations }}</strong></p>
+        <button *ngIf="isAlreadyRegistered()" class="btn-registered" disabled>✓ Already Registered</button>
+        <button *ngIf="!isAlreadyRegistered()" class="btn-register" [disabled]="isProcessing" (click)="register()">
           {{ isProcessing ? 'Processing...' : 'Register for Event' }}
         </button>
       </aside>
@@ -43,6 +52,17 @@
       <aside class="registration-card admin-view" *ngIf="userRole === 'ORG'">
         <h3>Event Management</h3>
         <p>Total Participants: <strong>{{ event._count?.registrations }}</strong></p>
+        
+        <div class="action-buttons">
+          <div *ngIf="!isEditing">
+            <button class="btn-edit" (click)="startEdit()">✏️ Edit Event</button>
+          </div>
+          
+          <div *ngIf="isEditing">
+            <button class="btn-save" (click)="saveEdit()" [disabled]="isProcessing">💾 Save Changes</button>
+            <button class="btn-cancel" (click)="cancelEdit()">Cancel</button>
+          </div>
+        </div>
       </aside>
     </div>
   </div>
