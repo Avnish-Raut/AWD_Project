@@ -41,6 +41,10 @@
           </div>
           
           <div class="button-group">
+            <button class="btn-primary" (click)="generateReport(event.event_id)" [disabled]="isGeneratingReport[event.event_id]" style="padding: 0.5rem 1rem; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; background: #6366f1; color: white;">
+              {{ isGeneratingReport[event.event_id] ? 'Generating...' : 'Report' }}
+            </button>
+
             <button class="btn-edit" [routerLink]="['/events', event.event_id]">
               View
             </button>
@@ -49,6 +53,27 @@
               Delete
             </button>
           </div>
+        </div>
+        
+        <div class="progress-container" *ngIf="(isGeneratingReport[event.event_id] || reportProgress[event.event_id] === 100) && !reportResults[event.event_id]" style="margin-top: 15px; background: #f1f5f9; border-radius: 8px; padding: 10px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem; color: #475569; font-weight: 600;">
+            <span>Report Generation</span>
+            <span>{{ reportProgress[event.event_id] || 0 }}%</span>
+          </div>
+          <div class="progress-bar" style="height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+            <div class="progress-fill" [style.width.%]="reportProgress[event.event_id] || 0" style="height: 100%; background: #22c55e; transition: width 0.3s ease;"></div>
+          </div>
+        </div>
+
+        <div *ngIf="reportResults[event.event_id]" class="report-results-card" style="margin-top: 15px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 15px;">
+          <h4 style="margin: 0 0 10px 0; color: #166534; font-size: 0.95rem; border-bottom: 1px solid #bbf7d0; padding-bottom: 5px;">Analysis Report Results</h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85rem; color: #1f2937;">
+            <div><strong>Total Users:</strong> {{ reportResults[event.event_id].total_registrations }}</div>
+            <div><strong>Occupancy Rate:</strong> <span style="color: #0284c7; font-weight: bold;">{{ reportResults[event.event_id].occupancy_rate_percent }}%</span></div>
+            <div style="color: #16a34a;"><strong>Confirmed:</strong> {{ reportResults[event.event_id].confirmed_registrations }}</div>
+            <div style="color: #dc2626;"><strong>Cancelled:</strong> {{ reportResults[event.event_id].cancelled_registrations }}</div>
+          </div>
+          <p style="margin: 10px 0 0 0; font-size: 0.75rem; color: #6b7280; text-align: right;">Capacity Limit: {{ reportResults[event.event_id].capacity || 'N/A' }}</p>
         </div>
       </div>
     </div>
