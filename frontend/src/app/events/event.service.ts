@@ -24,6 +24,20 @@ export class EventService {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
+  // --- Admin Methods ---
+  getEventsForAdmin(search?: string, skip?: number, take?: number): Observable<{ data: any[], total: number }> {
+    let params = new HttpParams();
+    if (search) params = params.append('search', search);
+    if (skip !== undefined) params = params.append('skip', skip.toString());
+    if (take !== undefined) params = params.append('take', take.toString());
+
+    return this.http.get<{ data: any[], total: number }>(`${this.apiUrl}/admin/list`, { params });
+  }
+
+  cancelEvent(eventId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${eventId}`);
+  }
+
   registerForEvent(eventId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/${eventId}/register`, { event_id: eventId });
   }

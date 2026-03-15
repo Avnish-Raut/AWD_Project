@@ -26,6 +26,19 @@ import { Role } from '@prisma/client';
 export class EventsController {
   constructor(private eventsService: EventsService) {}
 
+  @Get('admin/list')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  findAllForAdmin(
+    @Query('search') search?: string,
+    @Query('skip') skip?: string,
+    @Query('take') take?: string,
+  ) {
+    const skipVal = skip ? parseInt(skip, 10) : undefined;
+    const takeVal = take ? parseInt(take, 10) : undefined;
+    return this.eventsService.findAllForAdmin(search, skipVal, takeVal);
+  }
+
   @Get()
   findAll(
     @Query('search') search?: string,

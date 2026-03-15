@@ -27,6 +27,35 @@ export class EventsService {
     });
   }
 
+  // Admin - Get all events (including non-published and cancelled) with pagination
+  async findAllForAdmin(search?: string, skip?: number, take?: number) {
+    const whereCondition: any = search
+      ? {
+          OR: [
+            { title: { contains: search, mode: 'insensitive' } },
+            { location: { contains: search, mode: 'insensitive' } },
+          ],
+        }
+      : {};
+
+    const [data, total] = await Promise.all([
+      this.prisma.event.findMany({
+        where: whereCondition,
+        skip: skip || 0,
+        take: take || undefined,
+        include: {
+          organizer: {
+            select: { username: true, email: true }
+          }
+        },
+        orderBy: { created_at: 'desc' },
+      }),
+      this.prisma.event.count({ where: whereCondition })
+    ]);
+
+    return { data, total };
+  }
+
   // R13 + R33 — List all published events with optional search, location, and date range filters
   async findAllPublished(filters?: {
     search?: string;

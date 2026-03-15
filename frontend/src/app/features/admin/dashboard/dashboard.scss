@@ -1,0 +1,77 @@
+$primary: #4f46e5;
+$text-main: #111827;
+$text-muted: #6b7280;
+$white: #ffffff;
+$bg-light: #f9fafb;
+$shadow:
+  0 10px 15px -3px rgba(0, 0, 0, 0.1),
+  0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+.dashboard-header {
+  margin-bottom: 2rem;
+  
+  h1 {
+    color: $text-main;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+  }
+  
+  p {
+    color: $text-muted;
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background: $white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: $shadow;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    color: $text-muted;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $primary;
+
+    &.text-warning {
+      color: #dc2626; // match cancel red in user dashboard
+    }
+  }
+}
+
+.loading-state, .error-state {
+  background: $white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: $shadow;
+  text-align: center;
+  color: $text-muted;
+}
+
+.error-state {
+  color: #dc2626;
+  background: #fee2e2;
+}
