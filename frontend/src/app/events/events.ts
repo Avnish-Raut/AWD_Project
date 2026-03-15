@@ -1,8 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { EventService } from './event.service';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-browse-events',
   standalone: true,
@@ -12,16 +14,12 @@ import { FormsModule } from '@angular/forms';
 })
 export class BrowseEventsComponent implements OnInit {
   events: any[] = [];
-
-  searchFilters = {
-    search: '',
-    location: '',
-    dateFrom: '',
-    dateTo: '',
-  };
+  searchFilters = { search: '', location: '', dateFrom: '', dateTo: '' };
 
   constructor(
     private eventService: EventService,
+    private auth: AuthService,
+    private router: Router,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -29,12 +27,20 @@ export class BrowseEventsComponent implements OnInit {
     this.fetchEvents();
   }
 
+  backToDashboard() {
+    const role = this.auth.getRole();
+    if (role === 'ORG') {
+      this.router.navigate(['/organizer-dashboard']);
+    } else {
+      this.router.navigate(['/user-dashboard']);
+    }
+  }
+
   fetchEvents() {
     this.eventService.getPublishedEvents(this.searchFilters).subscribe({
       next: (data) => {
         this.events = data;
         this.cdr.detectChanges();
-        //console.log('Events loaded:', data);
       },
       error: (err) => {
         console.error('Error fetching events:', err);
@@ -43,7 +49,6 @@ export class BrowseEventsComponent implements OnInit {
     });
   }
 
-  // Called on every keystroke or when 'Search' button is clicked
   onFilterChange() {
     this.fetchEvents();
     this.cdr.detectChanges();

@@ -11,12 +11,14 @@ import { UserManagement } from './features/admin/user-management/user-management
 import { EventManagement } from './features/admin/event-management/event-management';
 import { SystemLogs } from './features/admin/system-logs/system-logs';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard';
+import { OrganizerDashboardComponent } from './organizer-dashboard/organizer-dashboard';
 import { BrowseEventsComponent } from './events/events';
 import { EventDetailsComponent } from './events/event-details/event-details';
+import { CreateEventComponent } from './events/create-event/create-event';
 import { ProfileComponent } from './user-dashboard/profile/profile';
+import { ParticipantListComponent } from './events/participant-list/participant-list';
 
 export const routes: Routes = [
-  // Public routes
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
@@ -29,16 +31,33 @@ export const routes: Routes = [
     canActivate: [authGuard, rolesGuard(['USER'])],
   },
 
-  // Any logged-in user events viewing
+  // Organizer Dashboard
+  {
+    path: 'organizer-dashboard',
+    component: OrganizerDashboardComponent,
+    canActivate: [authGuard, rolesGuard(['ORG'])],
+  },
+
+  // Organizer: Create Event
+  {
+    path: 'create-event',
+    component: CreateEventComponent,
+    canActivate: [authGuard, rolesGuard(['ORG'])],
+  },
+
+  // Participant List (Organizer Only)
+  { 
+    path: 'events/:id/participants', 
+    component: ParticipantListComponent, 
+    canActivate: [authGuard, rolesGuard(['ORG'])] 
+  },
+
+  // General Protected Routes
   { path: 'events', component: BrowseEventsComponent, canActivate: [authGuard] },
   { path: 'events/:id', component: EventDetailsComponent, canActivate: [authGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
 
-  // Organizer only
-  // { path: 'organizer/events', component: OrgEventListComponent, canActivate: [authGuard, rolesGuard(['ORG'])] },
-  // { path: 'organizer/events/create', component: CreateEventComponent, canActivate: [authGuard, rolesGuard(['ORG'])] },
-
-  // Admin only
+  // Admin Dashboard
   {
     path: 'admin',
     component: AdminLayout,
@@ -52,6 +71,7 @@ export const routes: Routes = [
     ]
   },
   
+  // Default Redirects
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];

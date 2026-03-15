@@ -54,4 +54,31 @@ export class MailService {
       `,
     });
   }
+
+  async sendEventUpdateEmail(email: string, eventTitle: string) {
+    await this.transporter.sendMail({
+      from: `"Event System" <${process.env.SMTP_USER}>`,
+      to: email,
+      subject: `Update: Changes to ${eventTitle}`,
+      html: `
+        <h3>Event Update</h3>
+        <p>Hello! We wanted to let you know that the details for <strong>${eventTitle}</strong> have been updated by the organizer.</p>
+        <p>Please log in to the dashboard to check the new location or time.</p>
+        <a href="${process.env.FRONTEND_URL}/events">View Event Details</a>
+      `,
+    });
+  }
+
+  async sendEventCancellationEmail(email: string, eventTitle: string) {
+    await this.transporter.sendMail({
+      from: `"Event System" <${process.env.SMTP_USER}>`,
+      to: email,
+      subject: `Notice: ${eventTitle} has been cancelled`,
+      html: `
+        <h3>Event Cancelled</h3>
+        <p>We regret to inform you that <strong>${eventTitle}</strong> has been cancelled by the organizer.</p>
+        <p>If you have any questions, please contact the organizer directly.</p>
+      `,
+    });
+  }
 }

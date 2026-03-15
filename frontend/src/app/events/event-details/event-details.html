@@ -1,10 +1,13 @@
 <div class="details-wrapper" *ngIf="!loading; else loader">
   <div class="container" *ngIf="event; else notFound">
-    <button class="btn-back" routerLink="/events">← Back to Browse</button>
+    <button class="btn-back" (click)="goBack()">← Back to Dashboard</button>
 
     <header class="event-hero">
-      <span class="badge">Upcoming Event</span>
-      <h1>{{ event.title }}</h1>
+      <span class="badge" [class.cancelled]="event.is_cancelled">
+        {{ event.is_cancelled ? 'Cancelled' : 'Upcoming Event' }}
+      </span>
+      <h1 *ngIf="!isEditing">{{ event.title }}</h1>
+      <input *ngIf="isEditing" type="text" [(ngModel)]="editForm.title" class="edit-title-input">
       <div class="meta-strip">
         <span>📍 {{ event.location }}</span>
         <span>📅 {{ event.event_date | date: 'fullDate' }}</span>
@@ -15,36 +18,69 @@
     <div class="grid-layout">
       <div class="main-info">
         <h3>About this event</h3>
-        <p class="description">{{ event.description }}</p>
+        <div *ngIf="!isEditing">
+          <p class="description">{{ event.description }}</p>
+
+          <div class="docs-section" *ngIf="event.documents?.length > 0">
+            <h4>📁 Resources</h4>
+            <ul>
+              <li *ngFor="let doc of event.documents">
+                <a [href]="'http://localhost:3000' + doc.file_path" target="_blank">{{ doc.file_name }}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div *ngIf="isEditing" class="edit-fields">
+          <label>Location</label>
+          <input type="text" [(ngModel)]="editForm.location" class="form-control">
+          <label>Event Date</label>
+          <input type="date" [(ngModel)]="editForm.event_date" class="form-control">
+          <label>Description</label>
+          <textarea [(ngModel)]="editForm.description" rows="5" class="form-control"></textarea>
+          <label>Capacity</label>
+          <input type="number" [(ngModel)]="editForm.capacity" class="form-control">
+
+          <label>Add Resource (PDF/Doc)</label>
+          <input type="file" (change)="onFileSelected($event)" class="form-control">
+        </div>
       </div>
 
-      <aside class="registration-card">
+      <aside class="registration-card" *ngIf="userRole === 'USER'">
         <h3>Join Us</h3>
-        <p>
-          Current Registrations: <strong>{{ event._count?.registrations }}</strong>
-        </p>
-
-        <button *ngIf="isAlreadyRegistered()" class="btn-registered" disabled>
-          ✓ Already Registered
+        <p>Current Registrations: <strong>{{ event._count?.registrations }}</strong></p>
+        <button *ngIf="isAlreadyRegistered()" class="btn-registered" disabled>✓ Already Registered</button>
+        <button *ngIf="!isAlreadyRegistered()" class="btn-register" [disabled]="isProcessing" (click)="register()">
+          {{ isProcessing ? 'Processing...' : 'Register' }}
         </button>
+      </aside>
 
-        <button
-          *ngIf="!isAlreadyRegistered()"
-          class="btn-register"
-          [disabled]="isProcessing"
-          (click)="register()"
-        >
-          {{ isProcessing ? 'Processing...' : 'Register for Event' }}
-        </button>
+      <aside class="registration-card admin-view" *ngIf="userRole === 'ORG'">
+        <h3>Event Management</h3>
+        <p>Total Participants: <strong>{{ event._count?.registrations }}</strong></p>
+        <div class="action-buttons">
+          <button class="btn-view-participants" [routerLink]="['/events', event.event_id, 'participants']">
+            👥 View Participant List
+          </button>
+          <button *ngIf="!isEditing" class="btn-edit" (click)="startEdit()">✏️ Edit</button>
+          <div *ngIf="isEditing">
+            <button class="btn-save" (click)="saveEdit()" [disabled]="isProcessing">💾 Save</button>
+            <button class="btn-cancel" (click)="cancelEdit()">Cancel</button>
+          </div>
+        </div>
       </aside>
     </div>
   </div>
 </div>
-
 <ng-template #loader>
-  <div class="status-msg">Loading event details...</div>
+  <div class="status-msg">
+    <p>Loading event details...</p>
+  </div>
 </ng-template>
 
 <ng-template #notFound>
-  <div class="status-msg">Event not found. It may have been removed.</div>
+  <div class="status-msg">
+    <p>Event not found. It may have been removed.</p>
+    <button class="btn-back" (click)="goBack()">Go Back</button>
+  </div>
 </ng-template>

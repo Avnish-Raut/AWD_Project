@@ -36,10 +36,13 @@ export class LoginComponent {
           this.error = '';
           this.cdr.detectChanges();
           
+          const role = this.auth.getRole(); 
+
           setTimeout(() => {
-            const userRole = this.auth.getRole();
-            if (userRole === 'ADMIN') {
+            if (role === 'ADMIN') {
               this.router.navigate(['/admin/dashboard']);
+            } else if (role === 'ORG') {
+              this.router.navigate(['/organizer-dashboard']);
             } else {
               this.router.navigate(['/user-dashboard']);
             }
@@ -51,8 +54,6 @@ export class LoginComponent {
           this.cdr.detectChanges();
         },
       });
-    } else {
-      this.error = 'Please enter valid email and password.';
     }
   }
 }

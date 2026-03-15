@@ -6,14 +6,18 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { MailService } from '../mail/mail.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 
 @Injectable()
 export class EventsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private mailService: MailService,
+  ) {}
 
-  // R11 — Create event (Organizer only)
+  // R11 — Create event
   async create(dto: CreateEventDto, organizerId: number) {
     return this.prisma.event.create({
       data: {
@@ -97,10 +101,12 @@ export class EventsService {
     });
   }
 
-  // List organizer's own events (any status)
   async findMyEvents(organizerId: number) {
     return this.prisma.event.findMany({
-      where: { organizer_id: organizerId },
+      where: { 
+        organizer_id: organizerId,
+        is_cancelled: false 
+      },
       include: {
         _count: { select: { registrations: true } },
       },
@@ -108,7 +114,6 @@ export class EventsService {
     });
   }
 
-  // List events the user is registered for
   async findUserEvents(userId: number) {
     return this.prisma.event.findMany({
       where: {
@@ -132,12 +137,14 @@ export class EventsService {
       orderBy: { created_at: 'desc' },
     });
   }
-  // Get a single event by ID
+
+  // UPDATED: Added documents to include
   async findOne(eventId: number) {
     const event = await this.prisma.event.findUnique({
       where: { event_id: eventId },
       include: {
         organizer: { select: { user_id: true, username: true } },
+        documents: true, // <--- ADD THIS LINE
         _count: {
           select: { registrations: { where: { status: 'CONFIRMED' } } },
         },
@@ -147,7 +154,24 @@ export class EventsService {
     return event;
   }
 
-  // R30 — Update event details (Organizer, own event only)
+  // NEW METHOD: Handle the database record for the file
+  async addDocument(eventId: number, userId: number, file: Express.Multer.File) {
+    const event = await this.findOne(eventId);
+    if (event.organizer_id !== userId)
+      throw new ForbiddenException('You can only upload files to your own events');
+
+    return this.prisma.document.create({
+      data: {
+        event_id: eventId,
+        uploaded_by: userId,
+        file_name: file.originalname,
+        file_path: `/uploads/documents/${file.filename}`,
+        file_size_kb: Math.round(file.size / 1024),
+      },
+    });
+  }
+  
+  // R30 — Update event details
   async update(eventId: number, dto: UpdateEventDto, userId: number) {
     const event = await this.findOne(eventId);
     if (event.organizer_id !== userId)
@@ -155,7 +179,7 @@ export class EventsService {
     if (event.is_cancelled)
       throw new BadRequestException('Cannot edit a cancelled event');
 
-    return this.prisma.event.update({
+    const updatedEvent = await this.prisma.event.update({
       where: { event_id: eventId },
       data: {
         ...(dto.title !== undefined && { title: dto.title }),
@@ -167,9 +191,46 @@ export class EventsService {
         ...(dto.capacity !== undefined && { capacity: dto.capacity }),
       },
     });
+
+    await this.notifyParticipants(eventId, event.title, 'update');
+    return updatedEvent;
   }
 
-  // Publish event (Organizer, own event)
+  // R21 — Cancel event
+  async cancel(eventId: number, userId: number, userRole: string) {
+    const event = await this.findOne(eventId);
+    if (event.is_cancelled)
+      throw new BadRequestException('Event is already cancelled');
+
+    const isAdmin = userRole === 'ADMIN';
+    const isOwner = event.organizer_id === userId;
+    if (!isAdmin && !isOwner)
+      throw new ForbiddenException('Not authorised to cancel this event');
+
+    const cancelledEvent = await this.prisma.event.update({
+      where: { event_id: eventId },
+      data: { is_cancelled: true, is_published: false },
+    });
+
+    await this.notifyParticipants(eventId, event.title, 'cancel');
+    return cancelledEvent;
+  }
+
+  private async notifyParticipants(eventId: number, title: string, type: 'update' | 'cancel') {
+    const registrations = await this.prisma.registration.findMany({
+      where: { event_id: eventId, status: 'CONFIRMED' },
+      include: { user: { select: { email: true } } },
+    });
+
+    for (const reg of registrations) {
+      if (type === 'update') {
+        this.mailService.sendEventUpdateEmail(reg.user.email, title);
+      } else {
+        this.mailService.sendEventCancellationEmail(reg.user.email, title);
+      }
+    }
+  }
+
   async publish(eventId: number, userId: number) {
     const event = await this.findOne(eventId);
     if (event.organizer_id !== userId)
@@ -183,30 +244,10 @@ export class EventsService {
     });
   }
 
-  // R21 — Cancel event (Organizer cancels own, Admin cancels any)
-  async cancel(eventId: number, userId: number, userRole: string) {
-    const event = await this.findOne(eventId);
-    if (event.is_cancelled)
-      throw new BadRequestException('Event is already cancelled');
-
-    const isAdmin = userRole === 'ADMIN';
-    const isOwner = event.organizer_id === userId;
-    if (!isAdmin && !isOwner)
-      throw new ForbiddenException('Not authorised to cancel this event');
-
-    return this.prisma.event.update({
-      where: { event_id: eventId },
-      data: { is_cancelled: true, is_published: false },
-    });
-  }
-
-  // R24 — Participant list for an event (Organizer of that event only)
   async getParticipants(eventId: number, userId: number) {
     const event = await this.findOne(eventId);
     if (event.organizer_id !== userId)
-      throw new ForbiddenException(
-        'Only the organizer can view the participant list',
-      );
+      throw new ForbiddenException('Only the organizer can view the participant list');
 
     return this.prisma.registration.findMany({
       where: { event_id: eventId, status: 'CONFIRMED' },
@@ -217,29 +258,23 @@ export class EventsService {
     });
   }
 
-  // R14 — Register participant to event (checks R15 capacity)
   async registerParticipant(eventId: number, userId: number) {
     const event = await this.findOne(eventId);
-
-    if (!event.is_published)
-      throw new BadRequestException('Event is not published');
+    if (!event.is_published) throw new BadRequestException('Event is not published');
     if (event.is_cancelled) throw new BadRequestException('Event is cancelled');
 
-    // R15 — capacity check
     const count = await this.prisma.registration.count({
       where: { event_id: eventId, status: 'CONFIRMED' },
     });
-    if (count >= event.capacity)
-      throw new BadRequestException('Event is fully booked');
+    if (count >= event.capacity) throw new BadRequestException('Event is fully booked');
 
-    // guard against duplicate registration
     const existing = await this.prisma.registration.findUnique({
       where: { user_id_event_id: { user_id: userId, event_id: eventId } },
     });
+    
     if (existing) {
       if (existing.status === 'CONFIRMED')
         throw new ConflictException('Already registered for this event');
-      // re-register after cancellation
       return this.prisma.registration.update({
         where: { user_id_event_id: { user_id: userId, event_id: eventId } },
         data: { status: 'CONFIRMED' },
@@ -251,16 +286,11 @@ export class EventsService {
     });
   }
 
-  // R12 — Cancel own registration
   async cancelRegistration(eventId: number, userId: number) {
     const existing = await this.prisma.registration.findUnique({
       where: { user_id_event_id: { user_id: userId, event_id: eventId } },
     });
-
-    // If it doesn't exist at all, that's a real 404
     if (!existing) throw new NotFoundException('Registration not found');
-
-    // If it's already cancelled, just return the record instead of throwing error
     if (existing.status === 'CANCELLED') return existing;
 
     return this.prisma.registration.update({

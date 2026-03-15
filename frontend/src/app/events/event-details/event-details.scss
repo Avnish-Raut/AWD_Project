@@ -1,6 +1,7 @@
 $primary: #6366f1;
 $primary-dark: #4f46e5;
 $success: #10b981;
+$danger: #ef4444; // Added for Cancel
 $text-main: #1e293b;
 $text-muted: #64748b;
 $bg-light: #f8fafc;
@@ -46,6 +47,11 @@ $shadow:
       font-size: 0.85rem;
       font-weight: 700;
       text-transform: uppercase;
+      
+      &.cancelled {
+        background: #fee2e2;
+        color: $danger;
+      }
     }
 
     h1 {
@@ -53,6 +59,19 @@ $shadow:
       color: $text-main;
       margin: 1.5rem 0;
       line-height: 1.2;
+    }
+
+    .edit-title-input {
+      width: 100%;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: $text-main;
+      border: 2px dashed $primary;
+      border-radius: 12px;
+      padding: 0.5rem 1rem;
+      margin: 1rem 0;
+      outline: none;
+      background: $bg-light;
     }
 
     .meta-strip {
@@ -96,13 +115,51 @@ $shadow:
       .description {
         line-height: 1.8;
         color: #475569;
-        white-space: pre-wrap; // Respects line breaks from backend
+        white-space: pre-wrap;
         font-size: 1.1rem;
+      }
+
+      /* --- Edit Form Styles --- */
+      .edit-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+
+        .field-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+
+          label {
+            font-weight: 600;
+            color: $text-main;
+            font-size: 0.9rem;
+          }
+
+          .form-control {
+            padding: 0.8rem 1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.2s;
+
+            &:focus {
+              outline: none;
+              border-color: $primary;
+              box-shadow: 0 0 0 3px rgba($primary, 0.1);
+            }
+          }
+
+          textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+          }
+        }
       }
     }
 
     .registration-card {
-      background: $text-main; // Dark blue/black look
+      background: $text-main;
       color: $white;
       padding: 2rem;
       border-radius: 20px;
@@ -127,6 +184,12 @@ $shadow:
         }
       }
 
+      .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
       button {
         width: 100%;
         padding: 1rem;
@@ -137,7 +200,7 @@ $shadow:
         cursor: pointer;
         transition: all 0.2s;
 
-        &.btn-register {
+        &.btn-register, &.btn-edit, &.btn-save {
           background: $primary;
           color: white;
 
@@ -145,12 +208,19 @@ $shadow:
             background: $primary-dark;
             transform: translateY(-2px);
           }
+        }
 
-          &:disabled {
-            background: #4b5563;
-            cursor: not-allowed;
-            opacity: 0.7;
-          }
+        &.btn-save {
+          background: $success;
+          &:hover { background: darken($success, 10%); }
+        }
+
+        &.btn-cancel {
+          background: rgba($white, 0.1);
+          color: $white;
+          border: 1px solid rgba($white, 0.2);
+          
+          &:hover { background: rgba($white, 0.2); }
         }
 
         &.btn-registered {
@@ -158,6 +228,11 @@ $shadow:
           color: $success;
           border: 1px solid $success;
           cursor: default;
+        }
+        
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
         }
       }
     }
