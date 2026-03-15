@@ -1,15 +1,36 @@
-import { Controller, Post, Get, Param, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Param, Req, UseGuards, Sse } from '@nestjs/common';
 import { ReportService } from './reports.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '@prisma/client';
+import { Observable, fromEvent, map } from 'rxjs';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller()
 @UseGuards(JwtAuthGuard, RolesGuard)
 // 🔐  Role-based access control for report endpoints
 export class ReportController {
-  constructor(private service: ReportService) {}
+  constructor(
+    private service: ReportService,
+    private eventEmitter: EventEmitter2
+  ) {}
+
+  /**
+   * R19 - Server-Sent Events (SSE) for Real-Time Progress
+   * Organizer can stream report progress
+   */
+  @Sse('reports/:id/progress')
+  @Roles(Role.ORG, Role.ADMIN)
+  streamProgress(@Param('id') id: string): Observable<MessageEvent> {
+    return fromEvent(this.eventEmitter, `report.progress.${id}`).pipe(
+      map((payload) => {
+        return {
+          data: payload,
+        } as MessageEvent;
+      }),
+    );
+  }
 
   /**
    * R18 – Generate Event Report

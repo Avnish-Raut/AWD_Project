@@ -13,6 +13,8 @@ import { LogsModule } from './logs/logs.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MailService } from './mail/mail.service';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';

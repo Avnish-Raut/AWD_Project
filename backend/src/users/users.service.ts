@@ -109,27 +109,38 @@ export class UsersService {
 
   // ─── R25: Admin – list all users ──────────────────────────────────────────
 
-  async findAll(search?: string) {
-    return this.prisma.user.findMany({
-      where: search
-        ? {
-            OR: [
-              { username: { contains: search, mode: 'insensitive' } },
-              { email: { contains: search, mode: 'insensitive' } },
-            ],
-          }
-        : undefined,
-      select: {
-        user_id: true,
-        username: true,
-        email: true,
-        role: true,
-        avatar_url: true,
-        created_at: true,
-        deleted_at: true,
-      },
-      orderBy: { created_at: 'desc' },
-    });
+  async findAll(search?: string, skip?: number, take?: number) {
+    const whereCondition: any = search
+      ? {
+          OR: [
+            { username: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+          ],
+        }
+      : undefined;
+
+    const [data, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where: whereCondition,
+        skip: skip || 0,
+        take: take || undefined,
+        select: {
+          user_id: true,
+          username: true,
+          email: true,
+          role: true,
+          created_at: true,
+          deleted_at: true,
+        },
+        orderBy: { created_at: 'desc' },
+      }),
+      this.prisma.user.count({ where: whereCondition })
+    ]);
+
+    return {
+      data,
+      total
+    };
   }
 
   // ─── R25: Admin – get single user ─────────────────────────────────────────
