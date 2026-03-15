@@ -23,6 +23,7 @@ describe('UsersService', () => {
       findFirst: jest.fn(),
       findMany: jest.fn(),
       update: jest.fn(),
+      count: jest.fn(),
     },
   };
 
@@ -115,10 +116,27 @@ describe('UsersService', () => {
     });
 
     it('should findAll with search filter', async () => {
-      await service.findAll('test-search');
-      expect(prisma.user.findMany).toHaveBeenCalledWith(
+      const mockUsers = [{ user_id: 1, email: 'test@test.com' }];
+      const mockCount = 1;
+
+      // Mock both calls that happen inside Promise.all
+      mockPrisma.user.findMany.mockResolvedValue(mockUsers);
+      mockPrisma.user.count.mockResolvedValue(mockCount);
+
+      const result = await service.findAll('test');
+
+      // Verify result structure
+      expect(result).toEqual({
+        data: mockUsers,
+        total: mockCount,
+      });
+
+      // Verify count was called with the same where condition
+      expect(prisma.user.count).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { OR: expect.any(Array) },
+          where: expect.objectContaining({
+            OR: expect.any(Array),
+          }),
         }),
       );
     });

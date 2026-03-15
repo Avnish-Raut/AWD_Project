@@ -4,8 +4,8 @@ import { UsersService } from './users.service';
 import { Role } from '@prisma/client';
 import * as fs from 'fs';
 import { BadRequestException } from '@nestjs/common';
+import { avatarStorage } from './users.controller';
 
-// Mock fs to prevent actual file deletion/creation during tests
 jest.mock('fs');
 jest.mock('bcrypt', () => ({
   hash: jest.fn().mockResolvedValue('hashed_password'),
@@ -112,11 +112,42 @@ describe('UsersController', () => {
       );
     });
   });
+  describe('Avatar Storage Coverage', () => {
+    it('should cover destination logic (mkdir if not exists)', () => {
+      const storage = avatarStorage.storage as any;
+      const mockCb = jest.fn();
 
+      jest.spyOn(fs, 'existsSync').mockReturnValue(false);
+      const mkdirSpy = jest.spyOn(fs, 'mkdirSync').mockImplementation();
+
+      storage.getDestination(null, null, mockCb);
+
+      expect(mkdirSpy).toHaveBeenCalledWith('./uploads/avatars', {
+        recursive: true,
+      });
+      expect(mockCb).toHaveBeenCalledWith(null, './uploads/avatars');
+
+      jest.restoreAllMocks();
+    });
+
+    it('should cover filename logic (regex and uniqueness)', () => {
+      const storage = avatarStorage.storage as any;
+      const mockCb = jest.fn();
+      const mockFile = { originalname: 'test image!.jpg' };
+
+      storage.getFilename(null, mockFile, mockCb);
+
+      const generatedName = mockCb.mock.calls[0][1];
+      expect(generatedName).not.toContain('!');
+      expect(generatedName).not.toContain(' ');
+      expect(generatedName).toMatch(/\d+-\d+-testimage.jpg/);
+    });
+  });
   describe('Admin Operations', () => {
     it('should findAll with optional search', async () => {
       await controller.findAll('search-term');
-      expect(service.findAll).toHaveBeenCalledWith('search-term');
+      const firstCall = (service.findAll as jest.Mock).mock.calls[0];
+      expect(firstCall[0]).toBe('search-term');
     });
 
     it('should findOne user by ID', async () => {

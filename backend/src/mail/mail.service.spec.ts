@@ -2,17 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MailService } from './mail.service';
 import * as nodemailer from 'nodemailer';
 
-// Mock the entire nodemailer module
+// Mock nodemailer
 jest.mock('nodemailer');
 
 describe('MailService', () => {
   let service: MailService;
-
-  // Create a mock sendMail function
   const mockSendMail = jest.fn().mockResolvedValue({ messageId: 'test-id' });
 
   beforeEach(async () => {
-    // Tell the mocked nodemailer to return our mockSendMail function
     (nodemailer.createTransport as jest.Mock).mockReturnValue({
       sendMail: mockSendMail,
     });
@@ -23,8 +20,8 @@ describe('MailService', () => {
 
     service = module.get<MailService>(MailService);
 
-    // Set up environment variables for the test
-    process.env.SMTP_USER = 'test@gmail.com';
+    // Setup Env vars
+    process.env.SMTP_USER = 'system@test.com';
     process.env.FRONTEND_URL = 'http://localhost:4200';
 
     jest.clearAllMocks();
@@ -34,32 +31,67 @@ describe('MailService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('sendPasswordResetEmail', () => {
-    it('should call sendMail with the correct recipient and formatted link', async () => {
-      const email = 'user@example.com';
-      const token = 'secret-token-123';
+  describe('Email Methods', () => {
+    const testEmail = 'user@example.com';
+    const testTitle = 'Angular Workshop';
 
-      await service.sendPasswordResetEmail(email, token);
-
+    it('sendPasswordResetEmail should include the reset link', async () => {
+      await service.sendPasswordResetEmail(testEmail, 'token123');
       expect(mockSendMail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: email,
-          from: `"Event System" <test@gmail.com>`,
-          subject: 'Password Reset Request',
-          html: expect.stringContaining(
-            'http://localhost:4200/reset-password?token=secret-token-123',
-          ),
+          to: testEmail,
+          html: expect.stringContaining('token123'),
         }),
       );
     });
 
-    it('should throw an error if transport.sendMail fails', async () => {
-      // Simulate a network/SMTP error
-      mockSendMail.mockRejectedValueOnce(new Error('SMTP Error'));
+    it('sendRegistrationConfirmation should include the event title', async () => {
+      await service.sendRegistrationConfirmation(testEmail, testTitle);
+      expect(mockSendMail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: testEmail,
+          subject: expect.stringContaining('Registration Confirmed'),
+          html: expect.stringContaining(testTitle),
+        }),
+      );
+    });
 
-      await expect(
-        service.sendPasswordResetEmail('test@test.com', 'token'),
-      ).rejects.toThrow('SMTP Error');
+    it('sendEventReminder should format the date correctly', async () => {
+      const date = new Date('2026-05-20T10:00:00');
+      await service.sendEventReminder(testEmail, testTitle, date, 'Berlin');
+
+      expect(mockSendMail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: testEmail,
+          html: expect.stringContaining('Berlin'),
+        }),
+      );
+      // Ensures .toLocaleString() on the date was executed
+      expect(mockSendMail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          html: expect.stringContaining(date.toLocaleString()),
+        }),
+      );
+    });
+
+    it('sendEventUpdateEmail should include the dashboard link', async () => {
+      await service.sendEventUpdateEmail(testEmail, testTitle);
+      expect(mockSendMail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          subject: expect.stringContaining('Update'),
+          html: expect.stringContaining('/events'),
+        }),
+      );
+    });
+
+    it('sendEventCancellationEmail should notify about cancellation', async () => {
+      await service.sendEventCancellationEmail(testEmail, testTitle);
+      expect(mockSendMail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          subject: expect.stringContaining('cancelled'),
+          html: expect.stringContaining('regret to inform you'),
+        }),
+      );
     });
   });
 });

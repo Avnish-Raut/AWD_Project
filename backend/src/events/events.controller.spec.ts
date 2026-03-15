@@ -2,28 +2,28 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EventsController } from './events.controller';
 import { EventsService } from './events.service';
 import { Role } from '@prisma/client';
-import { mock } from 'node:test';
 
 describe('EventsController', () => {
   let controller: EventsController;
   let service: EventsService;
 
-  const mockUser = { sub: 1, role: Role.USER };
-  const mockOrg = { sub: 10, role: Role.ORG };
-
   const mockEventsService = {
-    findAllPublished: jest.fn().mockResolvedValue([]),
-    findOne: jest.fn().mockResolvedValue({ event_id: 1 }),
-    create: jest.fn().mockResolvedValue({ event_id: 1 }),
-    findMyEvents: jest.fn().mockResolvedValue([]),
-    update: jest.fn().mockResolvedValue({ event_id: 1 }),
-    publish: jest.fn().mockResolvedValue({ event_id: 1 }),
-    getParticipants: jest.fn().mockResolvedValue([]),
-    registerParticipant: jest.fn().mockResolvedValue({ status: 'CONFIRMED' }),
-    cancelRegistration: jest.fn().mockResolvedValue({ status: 'CANCELLED' }),
-    findUserEvents: jest.fn().mockResolvedValue([]),
-    cancel: jest.fn().mockResolvedValue({ is_cancelled: true }),
+    findAllForAdmin: jest.fn(),
+    findAllPublished: jest.fn(),
+    findMyEvents: jest.fn(),
+    findUserEvents: jest.fn(),
+    findOne: jest.fn(),
+    addDocument: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    publish: jest.fn(),
+    getParticipants: jest.fn(),
+    registerParticipant: jest.fn(),
+    cancelRegistration: jest.fn(),
+    cancel: jest.fn(),
   };
+
+  const mockUser = { sub: 1, role: Role.ORG, email: 'test@test.com' };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,90 +40,95 @@ describe('EventsController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should call findAllPublished via findAll', async () => {
-    await controller.findAll('search', 'loc', 'from', 'to');
-    expect(service.findAllPublished).toHaveBeenCalled();
-  });
+  describe('findAllForAdmin', () => {
+    it('should parse skip and take strings to numbers', async () => {
+      await controller.findAllForAdmin('test', '10', '5');
+      expect(service.findAllForAdmin).toHaveBeenCalledWith('test', 10, 5);
+    });
 
-  it('should call findAllPublished with all query parameters', async () => {
-    const query = {
-      search: 'concert',
-      location: 'Berlin',
-      date_from: '2026-01-01',
-      date_to: '2026-01-02',
-    };
-
-    await controller.findAll(
-      query.search,
-      query.location,
-      query.date_from,
-      query.date_to,
-    );
-
-    expect(service.findAllPublished).toHaveBeenCalledWith({
-      search: 'concert',
-      location: 'Berlin',
-      dateFrom: '2026-01-01',
-      dateTo: '2026-01-02',
+    it('should handle undefined skip and take', async () => {
+      await controller.findAllForAdmin('test', undefined, undefined);
+      expect(service.findAllForAdmin).toHaveBeenCalledWith(
+        'test',
+        undefined,
+        undefined,
+      );
     });
   });
-  it('should call findAllPublished with NO parameters (undefined branch)', async () => {
-    await controller.findAll(undefined, undefined, undefined, undefined);
-    expect(service.findAllPublished).toHaveBeenCalledWith({
-      search: undefined,
-      location: undefined,
-      dateFrom: undefined,
-      dateTo: undefined,
+
+  describe('findAll', () => {
+    it('should pass filters to service', async () => {
+      const filters = {
+        search: 'a',
+        location: 'b',
+        dateFrom: 'c',
+        dateTo: 'd',
+      };
+      await controller.findAll('a', 'b', 'c', 'd');
+      expect(service.findAllPublished).toHaveBeenCalledWith(filters);
     });
   });
-  it('should call findOne', async () => {
-    await controller.findOne(1);
-    expect(service.findOne).toHaveBeenCalledWith(1);
+
+  describe('findMyEvents & findUserEvents', () => {
+    it('should call findMyEvents with user sub', async () => {
+      await controller.findMyEvents(mockUser);
+      expect(service.findMyEvents).toHaveBeenCalledWith(1);
+    });
+
+    it('should call findUserEvents with user sub', async () => {
+      await controller.findUserEvents({ ...mockUser, role: Role.USER });
+      expect(service.findUserEvents).toHaveBeenCalledWith(1);
+    });
   });
 
-  it('should call findMyEvents (Organizer)', async () => {
-    await controller.findMyEvents(mockOrg as any);
-    expect(service.findMyEvents).toHaveBeenCalledWith(mockOrg.sub);
+  describe('File Upload', () => {
+    it('should call addDocument with file and user sub', async () => {
+      const mockFile = { originalname: 'test.pdf' } as Express.Multer.File;
+      await controller.uploadFile(123, mockFile, mockUser);
+      expect(service.addDocument).toHaveBeenCalledWith(123, 1, mockFile);
+    });
   });
 
-  it('should call findUserEvents (User)', async () => {
-    await controller.findUserEvents(mockUser as any);
-    expect(service.findUserEvents).toHaveBeenCalledWith(mockUser.sub);
-  });
-  it('should call getParticipants', async () => {
-    await controller.getParticipants(1, mockOrg as any);
-    expect(service.getParticipants).toHaveBeenCalledWith(1, mockOrg.sub);
+  describe('Standard Actions (Create, Update, Publish)', () => {
+    it('should create an event', async () => {
+      const dto = { title: 'New' } as any;
+      await controller.create(dto, mockUser);
+      expect(service.create).toHaveBeenCalledWith(dto, 1);
+    });
+
+    it('should update an event', async () => {
+      const dto = { title: 'Updated' } as any;
+      await controller.update(123, dto, mockUser);
+      expect(service.update).toHaveBeenCalledWith(123, dto, 1);
+    });
+
+    it('should publish an event', async () => {
+      await controller.publish(123, mockUser);
+      expect(service.publish).toHaveBeenCalledWith(123, 1);
+    });
   });
 
-  it('should call create (Organizer)', async () => {
-    const dto = { title: 'Test' } as any;
-    await controller.create(dto, mockOrg as any);
-    expect(service.create).toHaveBeenCalledWith(dto, mockOrg.sub);
+  describe('Registration and Participants', () => {
+    it('should get participants', async () => {
+      await controller.getParticipants(123, mockUser);
+      expect(service.getParticipants).toHaveBeenCalledWith(123, 1);
+    });
+
+    it('should register for an event', async () => {
+      await controller.registerForEvent(123, mockUser);
+      expect(service.registerParticipant).toHaveBeenCalledWith(123, 1);
+    });
+
+    it('should cancel registration', async () => {
+      await controller.cancelRegistration(123, mockUser);
+      expect(service.cancelRegistration).toHaveBeenCalledWith(123, 1);
+    });
   });
 
-  it('should call update (Organizer)', async () => {
-    const dto = { title: 'Updated' } as any;
-    await controller.update(1, dto, mockOrg as any);
-    expect(service.update).toHaveBeenCalledWith(1, dto, mockOrg.sub);
-  });
-
-  it('should call publish (Organizer)', async () => {
-    await controller.publish(1, mockOrg as any);
-    expect(service.publish).toHaveBeenCalledWith(1, mockOrg.sub);
-  });
-
-  it('should call registerForEvent (Participant)', async () => {
-    await controller.registerForEvent(1, mockUser as any);
-    expect(service.registerParticipant).toHaveBeenCalledWith(1, mockUser.sub);
-  });
-
-  it('should call cancelRegistration (Participant)', async () => {
-    await controller.cancelRegistration(1, mockUser as any);
-    expect(service.cancelRegistration).toHaveBeenCalledWith(1, mockUser.sub);
-  });
-
-  it('should call cancelEvent (Admin/Org)', async () => {
-    await controller.cancelEvent(1, mockOrg as any);
-    expect(service.cancel).toHaveBeenCalledWith(1, mockOrg.sub, mockOrg.role);
+  describe('cancelEvent', () => {
+    it('should pass id, sub, and role to service', async () => {
+      await controller.cancelEvent(123, mockUser);
+      expect(service.cancel).toHaveBeenCalledWith(123, 1, Role.ORG);
+    });
   });
 });
