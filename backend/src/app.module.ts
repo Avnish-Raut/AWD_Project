@@ -17,7 +17,6 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ScheduleModule } from '@nestjs/schedule';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { join } from 'path';
 
 @Module({

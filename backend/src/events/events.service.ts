@@ -272,18 +272,31 @@ export class EventsService {
       where: { user_id_event_id: { user_id: userId, event_id: eventId } },
     });
     
+    let registration;
     if (existing) {
       if (existing.status === 'CONFIRMED')
         throw new ConflictException('Already registered for this event');
-      return this.prisma.registration.update({
+      registration = await this.prisma.registration.update({
         where: { user_id_event_id: { user_id: userId, event_id: eventId } },
         data: { status: 'CONFIRMED' },
       });
+    } else {
+      registration = await this.prisma.registration.create({
+        data: { user_id: userId, event_id: eventId },
+      });
     }
 
-    return this.prisma.registration.create({
-      data: { user_id: userId, event_id: eventId },
-    });
+    // Send confirmation email
+    try {
+      const user = await this.prisma.user.findUnique({ where: { user_id: userId } });
+      if (user && user.email) {
+        await this.mailService.sendRegistrationConfirmation(user.email, event.title);
+      }
+    } catch (error) {
+      console.error('Failed to send registration email:', error);
+    }
+
+    return registration;
   }
 
   async cancelRegistration(eventId: number, userId: number) {
