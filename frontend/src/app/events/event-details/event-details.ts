@@ -5,6 +5,7 @@ import { AuthService } from '../../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http'; // Added
+import { finalize } from 'rxjs/internal/operators/finalize';
 
 @Component({
   selector: 'app-event-details',
@@ -109,18 +110,29 @@ export class EventDetailsComponent implements OnInit {
 
   register() {
     this.isProcessing = true;
-    this.eventService.registerForEvent(this.event.event_id).subscribe(() => {
-      alert('Registered!');
-      this.loadData(this.event.event_id.toString());
-      this.isProcessing = false;
-    });
+
+    this.eventService
+      .registerForEvent(this.event.event_id)
+      .pipe(finalize(() => (this.isProcessing = false)))
+      .subscribe({
+        next: () => {
+          alert('Registered successfully!');
+          this.loadData(this.event.event_id.toString());
+        },
+        error: (err) => {
+          const message = err.error?.message || 'Failed to register';
+          alert(message);
+
+          this.loadData(this.event.event_id.toString());
+        },
+      });
   }
 
   goBack() {
     this.router.navigate([this.userRole === 'ORG' ? '/organizer-dashboard' : '/user-dashboard']);
   }
   get backLink(): string {
-    const role = this.auth.getRole(); 
+    const role = this.auth.getRole();
     return role === 'ORG' ? '/organizer-dashboard' : '/events';
   }
 

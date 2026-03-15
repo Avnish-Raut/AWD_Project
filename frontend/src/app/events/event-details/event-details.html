@@ -61,10 +61,13 @@
         <button
           *ngIf="!isAlreadyRegistered()"
           class="btn-register"
-          [disabled]="isProcessing"
+          [disabled]="isProcessing || event._count?.registrations >= event.capacity"
           (click)="register()"
         >
-          {{ isProcessing ? 'Processing...' : 'Register' }}
+          <span *ngIf="isProcessing">Processing...</span>
+          <span *ngIf="!isProcessing">
+            {{ event._count?.registrations >= event.capacity ? 'Event Full' : 'Register' }}
+          </span>
         </button>
       </aside>
 
