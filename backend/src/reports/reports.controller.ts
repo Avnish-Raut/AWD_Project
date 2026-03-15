@@ -7,7 +7,6 @@ import { Role } from '@prisma/client';
 
 @Controller()
 @UseGuards(JwtAuthGuard, RolesGuard)
-// 🔐  Role-based access control for report endpoints
 export class ReportController {
   constructor(private service: ReportService) {}
 
