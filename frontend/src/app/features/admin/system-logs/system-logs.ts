@@ -38,14 +38,14 @@ export class SystemLogs implements OnInit {
     const offset = (this.currentPage - 1) * this.pageSize;
     
     this.logsService.getLogs(this.selectedLevel, offset, this.pageSize).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.logs = response.logs;
         this.totalLogs = response.total;
         this.loading = false;
         this.error = null;
         this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Failed to load logs', err);
         this.error = 'Failed to load system logs';
         this.loading = false;

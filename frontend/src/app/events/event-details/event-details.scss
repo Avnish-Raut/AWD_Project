@@ -212,7 +212,7 @@ $shadow:
 
         &.btn-save {
           background: $success;
-          &:hover { background: darken($success, 10%); }
+          &:hover { background: color-mix(in srgb, $success 90%, black); }
         }
 
         &.btn-cancel {
