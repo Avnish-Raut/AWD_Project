@@ -335,3 +335,7 @@ planning/
 # Allow NestJS source modules named 'logs' (overrides the Node 'logs' rule above)
 !backend/src/logs/
 !backend/src/logs/**
+
+# Allow frontend logs service
+!frontend/src/app/core/services/logs/
+!frontend/src/app/core/services/logs/**
