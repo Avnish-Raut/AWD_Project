@@ -15,6 +15,9 @@ export class OrganizerDashboardComponent implements OnInit {
   user: any = null;
   myHostedEvents: any[] = [];
   loading = true;
+  reportProgress: { [key: number]: number } = {};
+  isGeneratingReport: { [key: number]: boolean } = {};
+  reportResults: { [key: number]: any } = {};
 
   constructor(
     private auth: AuthService,
@@ -50,6 +53,75 @@ export class OrganizerDashboardComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  generateReport(eventId: number) {
+    if (this.isGeneratingReport[eventId]) return;
+    
+    this.isGeneratingReport[eventId] = true;
+    this.reportProgress[eventId] = 0;
+    this.cdr.detectChanges();
+
+    this.eventService.generateReport(eventId).subscribe({
+      next: (response: any) => {
+        const reportId = response.report_id || response.id || eventId;
+        this.trackReportProgress(eventId, reportId);
+      },
+      error: (err: any) => {
+        console.error('Failed to start report generation:', err);
+        this.isGeneratingReport[eventId] = false;
+        this.cdr.detectChanges();
+        alert('Failed to start report generation.');
+      }
+    });
+  }
+
+  trackReportProgress(eventId: number, reportId: number) {
+    const token = localStorage.getItem('token');
+    
+    const eventSource = new EventSource(`http://localhost:3000/api/reports/${reportId}/progress?token=${token}`);
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log(`Report Progress [${eventId}]:`, data);
+        
+        if (data.progress !== undefined) {
+          this.reportProgress[eventId] = data.progress;
+          this.cdr.detectChanges();
+        }
+
+        if (data.status === 'DONE' || data.progress >= 100) {
+          eventSource.close();
+          this.isGeneratingReport[eventId] = false;
+          this.reportProgress[eventId] = 100;
+          this.cdr.detectChanges();
+          
+          // Automatically fetch the completed report to display the results!
+          this.eventService.getReport(reportId).subscribe({
+            next: (res) => {
+              if (res && res.result_data) {
+                this.reportResults[eventId] = res.result_data;
+                this.cdr.detectChanges();
+              }
+            }
+          });
+
+          setTimeout(() => {
+            alert(`Report generated successfully!`);
+          }, 500);
+        }
+      } catch (e) {
+        console.error('Error parsing SSE message', e);
+      }
+    };
+
+    eventSource.onerror = (err) => {
+      console.error('SSE Error:', err);
+      eventSource.close();
+      this.isGeneratingReport[eventId] = false;
+      this.cdr.detectChanges();
+    };
   }
 
   deleteEvent(eventId: number) {
