@@ -9,7 +9,6 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller()
 @UseGuards(JwtAuthGuard, RolesGuard)
-// 🔐  Role-based access control for report endpoints
 export class ReportController {
   constructor(
     private service: ReportService,
