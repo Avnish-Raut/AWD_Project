@@ -1,14 +1,33 @@
 <div class="browse-wrapper">
   <nav class="top-nav">
-    <button class="btn-back" (click)="backToDashboard()">← Back to Dashboard</button>
+    <button class="btn-back" routerLink="/user-dashboard">← Back to Dashboard</button>
   </nav>
-  
+  <section class="filters">
+    <input
+      type="text"
+      placeholder="Search events..."
+      [(ngModel)]="searchFilters.search"
+      (input)="onFilterChange()"
+    />
+
+    <input
+      type="text"
+      placeholder="Location..."
+      [(ngModel)]="searchFilters.location"
+      (input)="onFilterChange()"
+    />
+
+    <input type="date" [(ngModel)]="searchFilters.dateFrom" (change)="onFilterChange()" />
+  </section>
+
   <div class="event-grid" *ngIf="events.length > 0; else empty">
     <div class="event-card" *ngFor="let event of events">
       <div class="card-content">
         <h3>{{ event.title }}</h3>
         <p class="location">📍 {{ event.location }}</p>
         <p class="date">📅 {{ event.event_date | date: 'fullDate' }}</p>
+
+        <!-- <span class="badge"> {{ event._count.registrations }} People Attending </span>  -->
       </div>
       <button class="btn-primary" [routerLink]="['/events', event.event_id]">View Details</button>
     </div>

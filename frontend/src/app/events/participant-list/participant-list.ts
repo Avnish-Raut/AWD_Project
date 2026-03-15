@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { EventService } from '../event.service';
 import { CommonModule } from '@angular/common';
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './participant-list.html',
-  styleUrls: ['./participant-list.scss']
+  styleUrls: ['./participant-list.scss'],
 })
 export class ParticipantListComponent implements OnInit {
   participants: any[] = [];
@@ -17,7 +17,8 @@ export class ParticipantListComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private eventService: EventService
+    private eventService: EventService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -33,11 +34,13 @@ export class ParticipantListComponent implements OnInit {
       next: (data) => {
         this.participants = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Failed to load participants', err);
         this.loading = false;
-      }
+        this.cdr.detectChanges();
+      },
     });
   }
 }
