@@ -30,7 +30,7 @@ export class EventDetailsComponent implements OnInit {
     private eventService: EventService,
     private auth: AuthService,
     private cdr: ChangeDetectorRef,
-    private http: HttpClient // Injected
+    private http: HttpClient, // Injected
   ) {}
 
   ngOnInit() {
@@ -77,16 +77,23 @@ export class EventDetailsComponent implements OnInit {
         if (this.selectedFile) {
           const formData = new FormData();
           formData.append('file', this.selectedFile);
-          this.http.post(`http://localhost:3000/api/events/${this.event.event_id}/upload`, formData)
+          this.http
+            .post(`http://localhost:3000/api/events/${this.event.event_id}/upload`, formData)
             .subscribe({
               next: () => this.finishSave(),
-              error: () => { alert('Details saved, but file upload failed.'); this.finishSave(); }
+              error: () => {
+                alert('Details saved, but file upload failed.');
+                this.finishSave();
+              },
             });
         } else {
           this.finishSave();
         }
       },
-      error: () => { alert('Update failed'); this.isProcessing = false; }
+      error: () => {
+        alert('Update failed');
+        this.isProcessing = false;
+      },
     });
   }
 
@@ -111,5 +118,14 @@ export class EventDetailsComponent implements OnInit {
 
   goBack() {
     this.router.navigate([this.userRole === 'ORG' ? '/organizer-dashboard' : '/user-dashboard']);
+  }
+  get backLink(): string {
+    const role = this.auth.getRole(); 
+    return role === 'ORG' ? '/organizer-dashboard' : '/events';
+  }
+
+  get backLabel(): string {
+    const role = this.auth.getRole();
+    return role === 'ORG' ? '← Back to Dashboard' : '← Back to Browse';
   }
 }
