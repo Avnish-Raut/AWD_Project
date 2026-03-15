@@ -36,7 +36,7 @@ describe('FilesService', () => {
     const mockFile = {
       originalname: 'test.pdf',
       path: 'uploads/test.pdf',
-      size: 2048, // 2KB
+      size: 2048,
     } as Express.Multer.File;
 
     it('should successfully upload a file for the organizer', async () => {
@@ -51,7 +51,7 @@ describe('FilesService', () => {
       expect(mockPrisma.document.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           file_name: 'test.pdf',
-          file_size_kb: 2, // Math.ceil(2048 / 1024)
+          file_size_kb: 2,
         }),
       });
       expect(result.message).toBe('File uploaded successfully');
@@ -104,7 +104,7 @@ describe('FilesService', () => {
       mockPrisma.event.findUnique.mockResolvedValue({
         event_id: eventId,
         organizer_id: 999,
-      }); // Someone else is organizer
+      });
       mockPrisma.registration.findFirst.mockResolvedValue({ id: 1 }); // User is registered
 
       const result = await service.getFileForDownload(
@@ -146,7 +146,6 @@ describe('FilesService', () => {
         organizer_id: 999,
       });
 
-      // Simulating a case where userRole is something else and not the organizer
       await expect(
         service.getFileForDownload(eventId, fileId, userId, 'OTHER' as any),
       ).rejects.toThrow(ForbiddenException);

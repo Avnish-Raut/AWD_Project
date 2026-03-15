@@ -77,7 +77,7 @@ describe('UsersService', () => {
       expect(prisma.user.update).toHaveBeenCalled();
     });
     it('should throw BadRequestException if new_password is provided without current_password', async () => {
-      const dto = { new_password: 'brand-new-password' }; // Notice current_password is missing
+      const dto = { new_password: 'brand-new-password' };
 
       await expect(service.updateProfile(1, dto)).rejects.toThrow(
         new BadRequestException(
@@ -119,19 +119,16 @@ describe('UsersService', () => {
       const mockUsers = [{ user_id: 1, email: 'test@test.com' }];
       const mockCount = 1;
 
-      // Mock both calls that happen inside Promise.all
       mockPrisma.user.findMany.mockResolvedValue(mockUsers);
       mockPrisma.user.count.mockResolvedValue(mockCount);
 
       const result = await service.findAll('test');
 
-      // Verify result structure
       expect(result).toEqual({
         data: mockUsers,
         total: mockCount,
       });
 
-      // Verify count was called with the same where condition
       expect(prisma.user.count).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
@@ -214,18 +211,15 @@ describe('UsersService', () => {
     const newRole = Role.ADMIN;
 
     it('should successfully update a user role and create a log', async () => {
-      // 1. Mock finding the user first
       (mockPrisma.user.findUnique as jest.Mock).mockResolvedValue({
         user_id: userId,
       });
 
-      // 2. Mock the update result
       const updatedUser = { user_id: userId, role: newRole };
       (mockPrisma.user.update as jest.Mock).mockResolvedValue(updatedUser);
 
       const result = await service.updateRole(userId, newRole);
 
-      // 3. Assertions
       expect(result.role).toBe(newRole);
       expect(mockPrisma.user.update).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -233,7 +227,6 @@ describe('UsersService', () => {
         }),
       );
 
-      // 4. Verify the LogsService was called
       expect(mockLogs.create).toHaveBeenCalledWith(
         'INFO',
         expect.stringContaining(
@@ -249,7 +242,6 @@ describe('UsersService', () => {
         NotFoundException,
       );
 
-      // Ensure update was never called if user wasn't found
       expect(mockPrisma.user.update).not.toHaveBeenCalled();
     });
   });
@@ -257,7 +249,6 @@ describe('UsersService', () => {
     const userId = 1;
 
     it('should successfully soft-delete the account and log the action', async () => {
-      // 1. Mock finding an active user
       (mockPrisma.user.findUnique as jest.Mock).mockResolvedValue({
         user_id: userId,
         deleted_at: null,
@@ -268,13 +259,11 @@ describe('UsersService', () => {
 
       const result = await service.deleteAccount(userId);
 
-      // 2. Verify the update used a Date object (for soft delete)
       expect(mockPrisma.user.update).toHaveBeenCalledWith({
         where: { user_id: userId },
         data: { deleted_at: expect.any(Date) },
       });
 
-      // 3. Verify the log was created with the correct userId
       expect(mockLogs.create).toHaveBeenCalledWith(
         'INFO',
         `User ${userId} deleted their account`,
@@ -294,7 +283,6 @@ describe('UsersService', () => {
     });
 
     it('should throw ConflictException if account is already deleted', async () => {
-      // Mock a user that already has a deleted_at timestamp
       (mockPrisma.user.findUnique as jest.Mock).mockResolvedValue({
         user_id: userId,
         deleted_at: new Date(),

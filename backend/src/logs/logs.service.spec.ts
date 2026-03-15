@@ -48,7 +48,6 @@ describe('LogsService', () => {
     it('should create a system log entry WITHOUT a userId (null fallback)', async () => {
       mockPrisma.log.create.mockResolvedValue({ id: 2 });
 
-      // We don't pass the 3rd argument here
       await service.create(LogLevel.ERROR, 'Database connection failed');
 
       expect(mockPrisma.log.create).toHaveBeenCalledWith({
@@ -61,24 +60,22 @@ describe('LogsService', () => {
     });
   });
 
-  // ─── FindAll Log Tests ─────────────────────────────────────────
+  // ─── FindAll Log Tests ───
 
   describe('findAll', () => {
     it('should return logs with default pagination when NO options are provided', async () => {
-      // Mock the Promise.all results
       mockPrisma.log.findMany.mockResolvedValue([
         { id: 1, message: 'test log' },
       ]);
       mockPrisma.log.count.mockResolvedValue(1);
 
-      // Call without any arguments to trigger the `opts ?? {}` fallback
       const result = await service.findAll();
 
       expect(mockPrisma.log.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          take: 100, // The default limit
-          skip: 0, // The default offset
-          where: {}, // Empty where clause because no filters were passed
+          take: 100,
+          skip: 0,
+          where: {},
         }),
       );
       expect(mockPrisma.log.count).toHaveBeenCalledWith({ where: {} });
@@ -105,7 +102,7 @@ describe('LogsService', () => {
         expect.objectContaining({
           take: 50,
           skip: 25,
-          where: expectedWhere, // Proves the spread operators worked
+          where: expectedWhere,
         }),
       );
       expect(mockPrisma.log.count).toHaveBeenCalledWith({

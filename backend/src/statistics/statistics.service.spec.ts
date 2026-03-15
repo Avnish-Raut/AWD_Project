@@ -32,7 +32,6 @@ describe('StatisticsService', () => {
 
   describe('getAdminDashboardStats', () => {
     it('should aggregate counts from users, events, registrations, and logs', async () => {
-      // Setup specific return values for each count call
       mockPrisma.user.count.mockResolvedValue(100);
       mockPrisma.event.count.mockResolvedValue(50);
       mockPrisma.registration.count.mockResolvedValue(200);
@@ -40,7 +39,6 @@ describe('StatisticsService', () => {
 
       const stats = await service.getAdminDashboardStats();
 
-      // Verify the structure of the returned object
       expect(stats).toEqual({
         totalUsers: 100,
         totalEvents: 50,
@@ -48,7 +46,6 @@ describe('StatisticsService', () => {
         systemAlerts: 5,
       });
 
-      // Verify each call used the correct filters
       expect(prisma.user.count).toHaveBeenCalledWith({
         where: { deleted_at: null },
       });

@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MailService } from './mail.service';
 import * as nodemailer from 'nodemailer';
 
-// Mock nodemailer
 jest.mock('nodemailer');
 
 describe('MailService', () => {
@@ -20,7 +19,6 @@ describe('MailService', () => {
 
     service = module.get<MailService>(MailService);
 
-    // Setup Env vars
     process.env.SMTP_USER = 'system@test.com';
     process.env.FRONTEND_URL = 'http://localhost:4200';
 
@@ -66,7 +64,7 @@ describe('MailService', () => {
           html: expect.stringContaining('Berlin'),
         }),
       );
-      // Ensures .toLocaleString() on the date was executed
+
       expect(mockSendMail).toHaveBeenCalledWith(
         expect.objectContaining({
           html: expect.stringContaining(date.toLocaleString()),

@@ -33,7 +33,6 @@ describe('LogsController', () => {
 
   describe('findAll', () => {
     it('should call LogsService with default values when no queries are provided', async () => {
-      // 1. Call with all undefined parameters
       const result = await controller.findAll(
         undefined,
         undefined,
@@ -41,7 +40,6 @@ describe('LogsController', () => {
         undefined,
       );
 
-      // 2. Verify the fallbacks (100 and 0) were used
       expect(logsService.findAll).toHaveBeenCalledWith({
         level: undefined,
         userId: undefined,
@@ -53,10 +51,8 @@ describe('LogsController', () => {
     });
 
     it('should parse string query parameters into numbers', async () => {
-      // 1. Call with string representations of numbers, just like an HTTP request would
       await controller.findAll(LogLevel.ERROR, '5', '50', '10');
 
-      // 2. Verify parseInt successfully converted them
       expect(logsService.findAll).toHaveBeenCalledWith({
         level: LogLevel.ERROR,
         userId: 5,
@@ -66,10 +62,8 @@ describe('LogsController', () => {
     });
 
     it('should handle partial query parameters correctly', async () => {
-      // 1. Provide only level and userId, leaving limit and offset empty
       await controller.findAll(LogLevel.WARN, '42', undefined, undefined);
 
-      // 2. Verify it parsed the userId but fell back to defaults for limit/offset
       expect(logsService.findAll).toHaveBeenCalledWith({
         level: LogLevel.WARN,
         userId: 42,

@@ -42,7 +42,7 @@ describe('ReportService', () => {
     prisma = module.get<PrismaService>(PrismaService);
     eventEmitter = module.get<EventEmitter2>(EventEmitter2);
     jest.clearAllMocks();
-    jest.useFakeTimers(); // Handle the setTimeout logic
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -93,7 +93,6 @@ describe('ReportService', () => {
 
   describe('processReport (Private Logic)', () => {
     beforeEach(() => {
-      // Force the 1.5s delay to be 0ms during tests
       jest.spyOn(global, 'setTimeout').mockImplementation((cb: any) => {
         cb();
         return {} as any;
@@ -117,15 +116,11 @@ describe('ReportService', () => {
         },
       };
 
-      // Ensure all prisma calls return promises so they don't hang
       mockPrisma.report.update.mockResolvedValue({});
       mockPrisma.report.findUnique.mockResolvedValue(mockReportData);
 
-      // Act: Call the private method and AWAIT it
-      // Because we mocked setTimeout to 0ms, this will finish instantly
       await (service as any).processReport(100);
 
-      // Assert
       expect(prisma.report.update).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { report_id: 100 },
@@ -133,12 +128,11 @@ describe('ReportService', () => {
         }),
       );
 
-      // Verify calculation (2 confirmed / 100 capacity)
       const lastCall = (prisma.report.update as jest.Mock).mock.calls.find(
         (call) => call[0].data.status === ReportStatus.DONE,
       );
       expect(lastCall[0].data.result_data.occupancy_rate_percent).toBe(2);
-    }, 10000); // Increased test-specific timeout just in case
+    }, 10000);
 
     it('should handle zero capacity to avoid division by zero', async () => {
       mockPrisma.report.findUnique.mockResolvedValue({

@@ -68,9 +68,6 @@ describe('EventsService', () => {
     });
   });
   describe('EventsService Coverage Boost', () => {
-    // ... existing setup ...
-
-    // TARGETING LINES 105-154: findAllPublished filtering logic
     describe('findAllPublished - Specific Filter Branches', () => {
       it('should cover the search-only branch', async () => {
         await service.findAllPublished({ search: 'Gala' });
@@ -328,17 +325,14 @@ describe('EventsService', () => {
     });
 
     it('should update status to CONFIRMED if user previously cancelled', async () => {
-      // 1. Mock the event with a clear capacity
       jest.spyOn(service, 'findOne').mockResolvedValue({
         is_published: true,
         is_cancelled: false,
         capacity: 10,
       } as any);
 
-      // 2. Mock the current confirmed count to be LOWER than capacity
       mockPrisma.registration.count.mockResolvedValue(0);
 
-      // 3. Mock the existing cancelled registration
       mockPrisma.registration.findUnique.mockResolvedValue({
         status: 'CANCELLED',
       });

@@ -57,7 +57,6 @@ describe('NotificationsService', () => {
 
       await service.handleCron();
 
-      // Verify date range was used (roughly tomorrow)
       expect(prisma.event.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
@@ -68,7 +67,6 @@ describe('NotificationsService', () => {
         }),
       );
 
-      // Verify Mail Service was called
       expect(mailService.sendEventReminder).toHaveBeenCalledWith(
         'user@test.com',
         'Tomorrow Party',
@@ -76,7 +74,6 @@ describe('NotificationsService', () => {
         'Club Nest',
       );
 
-      // Verify Audit Notification was created in DB
       expect(prisma.notification.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({ user_id: 10 }),
@@ -100,20 +97,19 @@ describe('NotificationsService', () => {
         new Error('SMTP Down'),
       );
 
-      // We wrap it in a spy to ensure it doesn't crash the whole process
       const loggerSpy = jest.spyOn((service as any).logger, 'error');
 
       await service.handleCron();
 
       expect(loggerSpy).toHaveBeenCalled();
-      // Ensure it tried to send but didn't create a notification record on failure
+
       expect(prisma.notification.create).not.toHaveBeenCalled();
     });
 
     it('should skip if user or email is missing', async () => {
       const mockEvents = [
         {
-          registrations: [{ user: null }], // Test the "if (reg.user && reg.user.email)" line
+          registrations: [{ user: null }],
         },
       ];
       mockPrisma.event.findMany.mockResolvedValue(mockEvents);
