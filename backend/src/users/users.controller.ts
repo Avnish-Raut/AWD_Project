@@ -29,6 +29,26 @@ import { GetUser } from '../auth/decorators/get-user.decorator';
 import type { JwtPayload } from '../auth/decorators/get-user.decorator';
 import { Role } from '@prisma/client';
 
+export const avatarStorage = {
+  storage: diskStorage({
+    destination: (req, file, cb) => {
+      const dir = './uploads/avatars';
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      cb(null, dir);
+    },
+    filename: (req, file, cb) => {
+      const uniqueName =
+        Date.now() +
+        '-' +
+        Math.round(Math.random() * 1e9) +
+        '-' +
+        file.originalname.replace(/[^a-zA-Z0-9.\-_]/g, '');
+      cb(null, uniqueName);
+    },
+  }),
+};
 @Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UsersController {

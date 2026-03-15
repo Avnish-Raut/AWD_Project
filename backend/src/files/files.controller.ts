@@ -18,7 +18,18 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 import * as express from 'express';
-
+export const fileUploadConfig = {
+  storage: diskStorage({
+    destination: './uploads',
+    filename: (req, file, cb) => {
+      const uniqueName = Date.now() + '-' + file.originalname;
+      cb(null, uniqueName);
+    },
+  }),
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+};
 @Controller('events')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}

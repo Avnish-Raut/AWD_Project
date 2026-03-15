@@ -93,7 +93,6 @@ describe('AuthController', () => {
 
   describe('getProfile', () => {
     it('should extract user.sub from the request and call authService.getUserProfile', async () => {
-      // Mock the request object that the JwtAuthGuard injects
       const mockReq = {
         user: { sub: 1, email: 'test@test.com', role: 'USER' },
       };

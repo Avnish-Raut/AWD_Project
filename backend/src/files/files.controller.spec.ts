@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { FilesController } from './files.controller';
+import { FilesController, fileUploadConfig } from './files.controller';
 import { FilesService } from './files.service';
 import { Role } from '@prisma/client';
 import { Response } from 'express';
@@ -12,27 +12,42 @@ describe('FilesController', () => {
     uploadFile: jest.fn(),
     getFileForDownload: jest.fn(),
   };
+  describe('FilesController Upload Logic Coverage', () => {
+    it('should cover the filename generation logic', () => {
+      const storage = fileUploadConfig.storage as any;
+      const mockCb = jest.fn();
+      const mockFile = { originalname: 'contract.pdf' };
 
+      storage.getFilename(null, mockFile, mockCb);
+
+      const generatedName = mockCb.mock.calls[0][1];
+      expect(generatedName).toContain('-contract.pdf');
+
+      const timestamp = generatedName.split('-')[0];
+      expect(isNaN(Number(timestamp))).toBe(false);
+    });
+
+    it('should have the correct file size limits', () => {
+      // This covers the 'limits' object lines
+      expect(fileUploadConfig.limits.fileSize).toBe(5 * 1024 * 1024);
+    });
+  });
   describe('FilesController Metadata', () => {
     it('should generate a unique filename with a timestamp', () => {
-      // 1. Extract the interceptor from the uploadFile method
       const interceptors = Reflect.getMetadata(
         '__interceptors__',
         FilesController.prototype.uploadFile,
       );
       const fileInterceptor = interceptors[0];
 
-      // 2. Access the storage options (this is a bit of deep diving)
       const storage = (fileInterceptor as any).options?.storage;
 
       if (storage && typeof (storage as any).getFilename === 'function') {
         const mockFile = { originalname: 'test.jpg' };
         const cb = jest.fn();
 
-        // 3. Call the filename function directly
         (storage as any).getFilename(null, mockFile, cb);
 
-        // 4. Verify it returns "timestamp-test.jpg"
         expect(cb).toHaveBeenCalledWith(
           null,
           expect.stringMatching(/^\d+-test\.jpg$/),
@@ -77,7 +92,6 @@ describe('FilesController', () => {
     it('should call res.download with the path and name from the service', async () => {
       const mockReq = { user: { sub: 10, role: Role.USER } };
 
-      // Mock Express Response object
       const mockRes = {
         download: jest.fn(),
       } as unknown as Response;
@@ -91,7 +105,6 @@ describe('FilesController', () => {
 
       await controller.downloadFile(1, 5, mockReq, mockRes);
 
-      // Verify the controller correctly communicated with the service
       expect(service.getFileForDownload).toHaveBeenCalledWith(
         1,
         5,
@@ -99,7 +112,6 @@ describe('FilesController', () => {
         Role.USER,
       );
 
-      // Verify the controller actually triggered the Express download
       expect(mockRes.download).toHaveBeenCalledWith(
         mockDocument.file_path,
         mockDocument.file_name,

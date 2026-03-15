@@ -13,13 +13,11 @@ import { Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 
-// 1. Mock bcrypt to prevent node-gyp build crashes
 jest.mock('bcrypt', () => ({
   hash: jest.fn().mockResolvedValue('hashed_password'),
   compare: jest.fn().mockResolvedValue(true),
 }));
 
-// 2. Mock crypto for the password reset token
 jest.mock('crypto', () => ({
   randomBytes: jest.fn().mockReturnValue({
     toString: jest.fn().mockReturnValue('fake-hex-token'),
@@ -85,7 +83,7 @@ describe('AuthService', () => {
     };
 
     it('should successfully register a user', async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(null); // Email not taken
+      mockPrisma.user.findUnique.mockResolvedValue(null);
       mockPrisma.user.create.mockResolvedValue({ user_id: 1 });
 
       const result = await service.register(registerDto as any);
@@ -96,7 +94,7 @@ describe('AuthService', () => {
     });
 
     it('should throw ConflictException if email is taken', async () => {
-      mockPrisma.user.findUnique.mockResolvedValue({ email: 'test@test.com' }); // Email taken
+      mockPrisma.user.findUnique.mockResolvedValue({ email: 'test@test.com' });
 
       await expect(service.register(registerDto as any)).rejects.toThrow(
         ConflictException,
@@ -141,7 +139,7 @@ describe('AuthService', () => {
         password_hash: 'hashed',
         deleted_at: null,
       });
-      (bcrypt.compare as jest.Mock).mockResolvedValue(false); // Force wrong password
+      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
       await expect(service.login(loginDto)).rejects.toThrow(
         UnauthorizedException,
@@ -188,7 +186,7 @@ describe('AuthService', () => {
       user_id: 1,
       token: 'valid-token',
       used: false,
-      expires_at: new Date(Date.now() + 100000), // In the future
+      expires_at: new Date(Date.now() + 100000),
     };
 
     it('should successfully reset the password', async () => {
@@ -227,7 +225,7 @@ describe('AuthService', () => {
     it('should throw BadRequest if token is expired', async () => {
       mockPrisma.passwordResetToken.findUnique.mockResolvedValue({
         ...validTokenRecord,
-        expires_at: new Date(Date.now() - 10000), // In the past
+        expires_at: new Date(Date.now() - 10000),
       });
       await expect(
         service.resetPassword('expired-token', 'pass'),
