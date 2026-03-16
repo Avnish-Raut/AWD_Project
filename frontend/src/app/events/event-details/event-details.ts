@@ -128,6 +128,24 @@ export class EventDetailsComponent implements OnInit {
       });
   }
 
+  publishEvent() {
+    if (!confirm('Are you sure you want to publish this event? This will make it visible to all users.')) return;
+
+    this.isProcessing = true;
+    this.eventService.publishEvent(this.event.event_id).subscribe({
+      next: () => {
+        alert('Event published successfully!');
+        this.loadData(this.event.event_id.toString());
+        this.isProcessing = false;
+      },
+      error: (err) => {
+        console.error('Publish failed:', err);
+        alert(err.error?.message || 'Failed to publish event');
+        this.isProcessing = false;
+      }
+    });
+  }
+
   goBack() {
     this.router.navigate([this.userRole === 'ORG' ? '/organizer-dashboard' : '/user-dashboard']);
   }

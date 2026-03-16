@@ -245,3 +245,36 @@ $shadow:
     color: $text-muted;
   }
 }
+
+.btn-publish {
+  background: #6366f1 !important; // Indigo
+  color: white !important;
+  margin-bottom: 0.5rem;
+  
+  &:hover:not(:disabled) {
+    background: #4f46e5 !important;
+    transform: translateY(-2px);
+  }
+}
+
+.status-live {
+  background: rgba(#10b981, 0.1);
+  color: #10b981;
+  padding: 0.8rem;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  border: 1px solid #10b981;
+}
+
+.btn-view-participants {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  margin-bottom: 0.5rem;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+  }
+}
