@@ -102,6 +102,7 @@ export class UserManagement implements OnInit {
       this.usersService.deactivateUser(user.user_id).subscribe({
         next: () => {
           user.deleted_at = new Date().toISOString();
+          this.cdr.detectChanges();
         },
         error: (err) => {
           alert('Failed to deactivate user');
@@ -116,6 +117,7 @@ export class UserManagement implements OnInit {
       this.usersService.reactivateUser(user.user_id).subscribe({
         next: (updatedUser) => {
           user.deleted_at = updatedUser.deleted_at;
+          this.cdr.detectChanges();
         },
         error: (err) => {
           alert('Failed to reactivate user');
