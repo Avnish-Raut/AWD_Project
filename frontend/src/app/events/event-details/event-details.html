@@ -77,13 +77,27 @@
           Total Participants: <strong>{{ event._count?.registrations }}</strong>
         </p>
         <div class="action-buttons">
+          <button 
+            *ngIf="!event.is_published && !event.is_cancelled && !isEditing" 
+            class="btn-publish" 
+            (click)="publishEvent()" 
+            [disabled]="isProcessing">
+            🚀 Publish Event
+          </button>
+
+          <div *ngIf="event.is_published" class="status-live">
+            ✅ This event is live
+          </div>
+
           <button
             class="btn-view-participants"
             [routerLink]="['/events', event.event_id, 'participants']"
           >
             👥 View Participant List
           </button>
+          
           <button *ngIf="!isEditing" class="btn-edit" (click)="startEdit()">✏️ Edit</button>
+          
           <div *ngIf="isEditing">
             <button class="btn-save" (click)="saveEdit()" [disabled]="isProcessing">💾 Save</button>
             <button class="btn-cancel" (click)="cancelEdit()">Cancel</button>

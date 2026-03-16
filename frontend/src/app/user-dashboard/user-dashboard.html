@@ -20,12 +20,16 @@
 
     <div *ngIf="myEvents && myEvents.length > 0; else noEvents">
       <div class="event-card" *ngFor="let event of myEvents">
-        <div class="event-info">
+        <div class="event-info" [routerLink]="['/events', event.event_id]" style="cursor: pointer;">
           <strong>{{ event.title }}</strong>
-          <span> {{ event.location }}</span>
-          <span> {{ event.event_date | date }}</span>
+          <span> 📍 {{ event.location }}</span>
+          <span> 📅 {{ event.event_date | date }}</span>
         </div>
-        <button class="btn-cancel" (click)="cancelRegistration(event.event_id)">Cancel</button>
+        
+        <div class="card-actions">
+           <button class="btn-view" [routerLink]="['/events', event.event_id]">Details</button>
+           <button class="btn-cancel" (click)="cancelRegistration(event.event_id)">Cancel</button>
+        </div>
       </div>
       <button class="btn-browse" routerLink="/events">🔍 Find More Events</button>
     </div>
