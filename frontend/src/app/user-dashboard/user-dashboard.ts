@@ -72,10 +72,10 @@ export class UserDashboardComponent implements OnInit {
       next: (events: any) => {
         // Map your backend data to FullCalendar's structure
         this.calendarOptions.events = events.map(
-          (event: { title: any; event_date: any; id: any }) => ({
+          (event: any) => ({
             title: event.title,
             start: event.event_date,
-            id: event.id,
+            id: event.event_id,
             backgroundColor: '#6366f1', // You can customize colors based on event type
             borderColor: '#4f46e5',
           }),
@@ -87,9 +87,7 @@ export class UserDashboardComponent implements OnInit {
   }
 
   handleEventClick(arg: any) {
-    alert('Event: ' + arg.event.title);
-    // You could navigate to event details here:
-    // this.router.navigate(['/events', arg.event.id]);
+    this.router.navigate(['/events', arg.event.id]);
   }
 
   cancelRegistration(eventId: number) {
