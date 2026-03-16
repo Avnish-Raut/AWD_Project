@@ -85,6 +85,7 @@ export class UserManagement implements OnInit {
       this.usersService.updateUserRole(user.user_id, newRole).subscribe({
         next: (updatedUser) => {
           user.role = updatedUser.role;
+          this.cdr.detectChanges();
         },
         error: (err) => {
           alert('Failed to update role');
