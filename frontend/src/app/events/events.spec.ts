@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BrowseEventsComponent } from './events';
 import { EventService } from './event.service';
 import { AuthService } from '../auth/auth.service';
-import { provideRouter, Router } from '@angular/router'; // Ensure Router is imported here
+import { provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 
@@ -32,10 +32,7 @@ describe('BrowseEventsComponent', () => {
   });
 
   it('should navigate to organizer-dashboard if user is ORG', () => {
-    // 1. Tell TypeScript exactly what 'router' is
     const router = TestBed.inject(Router); 
-    
-    // 2. Spy on the actual router instance
     spyOn(router, 'navigate'); 
     
     authServiceSpy.getRole.and.returnValue('ORG');
