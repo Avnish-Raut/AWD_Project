@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Injectable } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
@@ -7,6 +7,12 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
+@Injectable({ providedIn: 'root' })
+export class ReloadService {
+  reload(): void {
+    window.location.reload();
+  }
+}
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
@@ -23,7 +29,7 @@ export class UserDashboardComponent implements OnInit {
       center: 'title',
       right: 'dayGridMonth,dayGridWeek',
     },
-    events: [], // We will fill this from the API
+    events: [],
     eventClick: this.handleEventClick.bind(this),
     height: 'auto',
   };
@@ -39,10 +45,11 @@ export class UserDashboardComponent implements OnInit {
     private auth: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private reloadService: ReloadService,
   ) {}
 
   reloadPage(): void {
-    window.location.reload();
+    this.reloadService.reload();
   }
   ngOnInit() {
     // Load logged-in user profile
@@ -71,15 +78,13 @@ export class UserDashboardComponent implements OnInit {
     this.auth.getUserEvents().subscribe({
       next: (events: any) => {
         // Map your backend data to FullCalendar's structure
-        this.calendarOptions.events = events.map(
-          (event: any) => ({
-            title: event.title,
-            start: event.event_date,
-            id: event.event_id,
-            backgroundColor: '#6366f1', // You can customize colors based on event type
-            borderColor: '#4f46e5',
-          }),
-        );
+        this.calendarOptions.events = events.map((event: any) => ({
+          title: event.title,
+          start: event.event_date,
+          id: event.event_id,
+          backgroundColor: '#6366f1', // You can customize colors based on event type
+          borderColor: '#4f46e5',
+        }));
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Could not load events for calendar', err),
