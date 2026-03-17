@@ -167,4 +167,37 @@ describe('EventDetailsComponent', () => {
 
     expect(mockEventService.registerForEvent).toHaveBeenCalled();
   });
+  it('should NOT load user events if role is not USER', () => {
+    mockAuthService.getRole.and.returnValue('ORG');
+
+    component.userRole = 'ORG';
+
+    component.loadData('1');
+
+    expect(mockAuthService.getUserEvents).not.toHaveBeenCalled();
+  });
+  it('should return false if not registered', () => {
+    component.event = { event_id: 2 };
+    component.myEvents = [{ event_id: 1 }];
+
+    expect(component.isAlreadyRegistered()).toBeFalse();
+  });
+  it('should return dashboard label for ORG', () => {
+    mockAuthService.getRole.and.returnValue('ORG');
+
+    expect(component.backLabel).toBe('← Back to Dashboard');
+  });
+  it('should handle file upload error after successful update', () => {
+    spyOn(window, 'alert');
+
+    component.event = { event_id: 1 };
+    component.editForm = {};
+    component.selectedFile = new File(['a'], 'a.txt');
+
+    mockHttp.post.and.returnValue(throwError(() => new Error('upload fail')));
+
+    component.saveEdit();
+
+    expect(window.alert).toHaveBeenCalledWith('Details saved, but file upload failed.');
+  });
 });
