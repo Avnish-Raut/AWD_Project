@@ -1,10 +1,17 @@
-import { Component, OnInit, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, AfterViewInit, Injectable } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../user.service';
 import { AuthService } from '../../auth/auth.service';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
+
+@Injectable({ providedIn: 'root' })
+export class ReloadService {
+  reload(): void {
+    window.location.reload();
+  }
+}
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -31,6 +38,7 @@ export class ProfileComponent implements AfterViewInit {
     private authService: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private reloadService: ReloadService,
   ) {}
 
   ngAfterViewInit() {
@@ -55,7 +63,7 @@ export class ProfileComponent implements AfterViewInit {
     });
   }
   reloadPage(): void {
-    window.location.reload();
+    this.reloadService.reload();
   }
   onUpdateProfile() {
     // 1. Create a clean base payload

@@ -15,7 +15,13 @@ describe('ProfileComponent', () => {
   let mockRouter: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
-    mockUserService = jasmine.createSpyObj('UserService', ['getProfile', 'updateProfile', 'deleteAccount', 'uploadAvatar', 'deleteAvatar']);
+    mockUserService = jasmine.createSpyObj('UserService', [
+      'getProfile',
+      'updateProfile',
+      'deleteAccount',
+      'uploadAvatar',
+      'deleteAvatar',
+    ]);
     mockAuthService = jasmine.createSpyObj('AuthService', ['logout']);
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
@@ -25,24 +31,26 @@ describe('ProfileComponent', () => {
         { provide: UserService, useValue: mockUserService },
         { provide: AuthService, useValue: mockAuthService },
         { provide: Router, useValue: mockRouter },
-        { provide: ActivatedRoute, useValue: { params: of({}) } }
-      ]
+        { provide: ActivatedRoute, useValue: { params: of({}) } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProfileComponent);
     component = fixture.componentInstance;
-    
+
     // Mock basic user profile
-    mockUserService.getProfile.and.returnValue(of({
-      username: 'testuser',
-      email: 'test@example.com',
-      avatar_url: 'avatar.png'
-    }));
+    mockUserService.getProfile.and.returnValue(
+      of({
+        username: 'testuser',
+        email: 'test@example.com',
+        avatar_url: 'avatar.png',
+      }),
+    );
   });
 
   it('should create and load profile on init', () => {
     fixture.detectChanges();
-    
+
     expect(component).toBeTruthy();
     expect(mockUserService.getProfile).toHaveBeenCalled();
     expect(component.user.username).toBe('testuser');
@@ -54,12 +62,12 @@ describe('ProfileComponent', () => {
     spyOn(window, 'alert');
     spyOn(component, 'reloadPage').and.stub();
     mockUserService.updateProfile.and.returnValue(of({ username: 'newname' }));
-    
+
     component.updateDto.new_password = 'NewPassword123!';
     component.updateDto.current_password = 'OldPassword123!';
-    
+
     component.onUpdateProfile();
-    
+
     expect(mockUserService.updateProfile).toHaveBeenCalled();
     expect(window.alert).toHaveBeenCalledWith('Profile updated!');
     expect(component.user.username).toBe('newname');
@@ -67,9 +75,9 @@ describe('ProfileComponent', () => {
 
   it('should show delete confirm modal', () => {
     fixture.detectChanges();
-    
+
     component.confirmDelete();
-    
+
     expect(component.showDeleteModal).toBeTrue();
     expect(component.deleteConfirmText).toBe('');
   });
@@ -78,10 +86,10 @@ describe('ProfileComponent', () => {
     fixture.detectChanges();
     spyOn(window, 'alert');
     mockUserService.deleteAccount.and.returnValue(of({ message: 'Deleted' }));
-    
+
     component.deleteConfirmText = 'DELETE';
     component.executeDelete();
-    
+
     expect(mockUserService.deleteAccount).toHaveBeenCalled();
     expect(mockAuthService.logout).toHaveBeenCalled();
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/login']);
@@ -92,11 +100,11 @@ describe('ProfileComponent', () => {
     spyOn(window, 'alert');
     const mockFile = new File([''], 'test.png', { type: 'image/png' });
     const mockEvent = { target: { files: [mockFile] } };
-    
+
     mockUserService.uploadAvatar.and.returnValue(of({ avatar_url: 'new-avatar.png' }));
-    
+
     component.onFileSelected(mockEvent);
-    
+
     expect(mockUserService.uploadAvatar).toHaveBeenCalledWith(mockFile);
     expect(component.user.avatar_url).toBe('new-avatar.png');
     expect(window.alert).toHaveBeenCalledWith('Avatar uploaded successfully!');
