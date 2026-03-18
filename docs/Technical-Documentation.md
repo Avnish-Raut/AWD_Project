@@ -174,10 +174,7 @@ The backend uses a standard NestJS testing scheme encompassing robust Unit Tests
   ```bash
   npm run test:cov
   ```
-- **End-to-End Tests**:
-  ```bash
-  npm run test:e2e
-  ```
+
 
 ### Frontend Testing
 The Angular frontend extensively employs individual specs (`.spec.ts`) validating component creation, API service logic caching, and DOM-bindings.
