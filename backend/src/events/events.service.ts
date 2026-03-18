@@ -49,12 +49,12 @@ export class EventsService {
         take: take || undefined,
         include: {
           organizer: {
-            select: { username: true, email: true }
-          }
+            select: { username: true, email: true },
+          },
         },
         orderBy: { created_at: 'desc' },
       }),
-      this.prisma.event.count({ where: whereCondition })
+      this.prisma.event.count({ where: whereCondition }),
     ]);
 
     return { data, total };
@@ -103,12 +103,14 @@ export class EventsService {
 
   async findMyEvents(organizerId: number) {
     return this.prisma.event.findMany({
-      where: { 
+      where: {
         organizer_id: organizerId,
-        is_cancelled: false 
+        is_cancelled: false,
       },
       include: {
-        _count: { select: { registrations: true } },
+        _count: {
+          select: { registrations: { where: { status: 'CONFIRMED' } } },
+        },
       },
       orderBy: { created_at: 'desc' },
     });
@@ -155,10 +157,16 @@ export class EventsService {
   }
 
   // NEW METHOD: Handle the database record for the file
-  async addDocument(eventId: number, userId: number, file: Express.Multer.File) {
+  async addDocument(
+    eventId: number,
+    userId: number,
+    file: Express.Multer.File,
+  ) {
     const event = await this.findOne(eventId);
     if (event.organizer_id !== userId)
-      throw new ForbiddenException('You can only upload files to your own events');
+      throw new ForbiddenException(
+        'You can only upload files to your own events',
+      );
 
     return this.prisma.document.create({
       data: {
@@ -170,7 +178,7 @@ export class EventsService {
       },
     });
   }
-  
+
   // R30 — Update event details
   async update(eventId: number, dto: UpdateEventDto, userId: number) {
     const event = await this.findOne(eventId);
@@ -216,7 +224,11 @@ export class EventsService {
     return cancelledEvent;
   }
 
-  private async notifyParticipants(eventId: number, title: string, type: 'update' | 'cancel') {
+  private async notifyParticipants(
+    eventId: number,
+    title: string,
+    type: 'update' | 'cancel',
+  ) {
     const registrations = await this.prisma.registration.findMany({
       where: { event_id: eventId, status: 'CONFIRMED' },
       include: { user: { select: { email: true } } },
@@ -247,7 +259,9 @@ export class EventsService {
   async getParticipants(eventId: number, userId: number) {
     const event = await this.findOne(eventId);
     if (event.organizer_id !== userId)
-      throw new ForbiddenException('Only the organizer can view the participant list');
+      throw new ForbiddenException(
+        'Only the organizer can view the participant list',
+      );
 
     return this.prisma.registration.findMany({
       where: { event_id: eventId, status: 'CONFIRMED' },
@@ -260,18 +274,20 @@ export class EventsService {
 
   async registerParticipant(eventId: number, userId: number) {
     const event = await this.findOne(eventId);
-    if (!event.is_published) throw new BadRequestException('Event is not published');
+    if (!event.is_published)
+      throw new BadRequestException('Event is not published');
     if (event.is_cancelled) throw new BadRequestException('Event is cancelled');
 
     const count = await this.prisma.registration.count({
       where: { event_id: eventId, status: 'CONFIRMED' },
     });
-    if (count >= event.capacity) throw new BadRequestException('Event is fully booked');
+    if (count >= event.capacity)
+      throw new BadRequestException('Event is fully booked');
 
     const existing = await this.prisma.registration.findUnique({
       where: { user_id_event_id: { user_id: userId, event_id: eventId } },
     });
-    
+
     let registration;
     if (existing) {
       if (existing.status === 'CONFIRMED')
@@ -288,9 +304,14 @@ export class EventsService {
 
     // Send confirmation email
     try {
-      const user = await this.prisma.user.findUnique({ where: { user_id: userId } });
+      const user = await this.prisma.user.findUnique({
+        where: { user_id: userId },
+      });
       if (user && user.email) {
-        await this.mailService.sendRegistrationConfirmation(user.email, event.title);
+        await this.mailService.sendRegistrationConfirmation(
+          user.email,
+          event.title,
+        );
       }
     } catch (error) {
       console.error('Failed to send registration email:', error);

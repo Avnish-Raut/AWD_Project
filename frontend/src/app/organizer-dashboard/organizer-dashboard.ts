@@ -23,20 +23,20 @@ export class OrganizerDashboardComponent implements OnInit {
     private auth: AuthService,
     private eventService: EventService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
     this.auth.getProfile().subscribe({
       next: (data: any) => {
         this.user = data;
-        if (this.user.role !== 'ORG') { 
+        if (this.user.role !== 'ORG') {
           this.router.navigate(['/user-dashboard']);
           return;
         }
         this.loadHostedEvents();
       },
-      error: () => this.router.navigate(['/login'])
+      error: () => this.router.navigate(['/login']),
     });
   }
 
@@ -51,13 +51,13 @@ export class OrganizerDashboardComponent implements OnInit {
         console.error('Error loading events:', err);
         this.loading = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
   generateReport(eventId: number) {
     if (this.isGeneratingReport[eventId]) return;
-    
+
     this.isGeneratingReport[eventId] = true;
     this.reportProgress[eventId] = 0;
     this.cdr.detectChanges();
@@ -72,20 +72,22 @@ export class OrganizerDashboardComponent implements OnInit {
         this.isGeneratingReport[eventId] = false;
         this.cdr.detectChanges();
         alert('Failed to start report generation.');
-      }
+      },
     });
   }
 
   trackReportProgress(eventId: number, reportId: number) {
     const token = localStorage.getItem('token');
-    
-    const eventSource = new EventSource(`http://localhost:3000/api/reports/${reportId}/progress?token=${token}`);
+
+    const eventSource = new EventSource(
+      `http://localhost:3000/api/reports/${reportId}/progress?token=${token}`,
+    );
 
     eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log(`Report Progress [${eventId}]:`, data);
-        
+        // console.log(`Report Progress [${eventId}]:`, data);
+
         if (data.progress !== undefined) {
           this.reportProgress[eventId] = data.progress;
           this.cdr.detectChanges();
@@ -96,7 +98,7 @@ export class OrganizerDashboardComponent implements OnInit {
           this.isGeneratingReport[eventId] = false;
           this.reportProgress[eventId] = 100;
           this.cdr.detectChanges();
-          
+
           // Automatically fetch the completed report to display the results!
           this.eventService.getReport(reportId).subscribe({
             next: (res) => {
@@ -104,7 +106,7 @@ export class OrganizerDashboardComponent implements OnInit {
                 this.reportResults[eventId] = res.result_data;
                 this.cdr.detectChanges();
               }
-            }
+            },
           });
 
           setTimeout(() => {
@@ -128,10 +130,10 @@ export class OrganizerDashboardComponent implements OnInit {
     if (confirm('Are you sure you want to delete this event?')) {
       this.eventService.deleteEvent(eventId).subscribe({
         next: () => {
-          this.myHostedEvents = this.myHostedEvents.filter(e => e.event_id !== eventId);
+          this.myHostedEvents = this.myHostedEvents.filter((e) => e.event_id !== eventId);
           this.cdr.detectChanges();
         },
-        error: (err: any) => console.error('Delete failed:', err)
+        error: (err: any) => console.error('Delete failed:', err),
       });
     }
   }

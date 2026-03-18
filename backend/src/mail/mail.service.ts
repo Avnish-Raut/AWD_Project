@@ -4,17 +4,18 @@ import * as nodemailer from 'nodemailer';
 @Injectable()
 export class MailService {
   private transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: process.env.SMTP_HOST || '', // Now it's always a string
+    port: parseInt(process.env.SMTP_PORT || '2525', 10),
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
+      user: process.env.SMTP_USER || '',
+      pass: process.env.SMTP_PASS || '',
     },
   });
 
   async sendPasswordResetEmail(email: string, token: string) {
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
     await this.transporter.sendMail({
-      from: `"Event System" <${process.env.SMTP_USER}>`,
+      from: `"Event System" <noreply@hildesheim-events.de>`,
       to: email,
       subject: 'Password Reset Request',
       html: `
@@ -28,7 +29,7 @@ export class MailService {
 
   async sendRegistrationConfirmation(email: string, eventTitle: string) {
     await this.transporter.sendMail({
-      from: `"Event System" <${process.env.SMTP_USER}>`,
+      from: `"Event System" <noreply@hildesheim-events.de>`,
       to: email,
       subject: `Registration Confirmed: ${eventTitle}`,
       html: `
@@ -39,9 +40,14 @@ export class MailService {
     });
   }
 
-  async sendEventReminder(email: string, eventTitle: string, eventDate: Date, location: string) {
+  async sendEventReminder(
+    email: string,
+    eventTitle: string,
+    eventDate: Date,
+    location: string,
+  ) {
     await this.transporter.sendMail({
-      from: `"Event System" <${process.env.SMTP_USER}>`,
+      from: `"Event System" <noreply@hildesheim-events.de>`,
       to: email,
       subject: `Reminder: Upcoming Event "${eventTitle}"`,
       html: `
@@ -57,7 +63,7 @@ export class MailService {
 
   async sendEventUpdateEmail(email: string, eventTitle: string) {
     await this.transporter.sendMail({
-      from: `"Event System" <${process.env.SMTP_USER}>`,
+      from: `"Event System" <noreply@hildesheim-events.de>`,
       to: email,
       subject: `Update: Changes to ${eventTitle}`,
       html: `
@@ -71,7 +77,7 @@ export class MailService {
 
   async sendEventCancellationEmail(email: string, eventTitle: string) {
     await this.transporter.sendMail({
-      from: `"Event System" <${process.env.SMTP_USER}>`,
+      from: `"Event System" <noreply@hildesheim-events.de>`,
       to: email,
       subject: `Notice: ${eventTitle} has been cancelled`,
       html: `
