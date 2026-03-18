@@ -52,7 +52,7 @@ export class ProfileComponent implements AfterViewInit {
       next: (data) => {
         this.user = data;
         this.loading = false;
-        console.log('Profile loaded:', this.user);
+        // console.log('Profile loaded:', this.user);
         this.cdr.detectChanges();
       },
       error: (err) => {

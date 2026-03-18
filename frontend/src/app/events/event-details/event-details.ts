@@ -85,15 +85,18 @@ export class EventDetailsComponent implements OnInit {
               error: () => {
                 alert('Details saved, but file upload failed.');
                 this.finishSave();
+                this.cdr.detectChanges();
               },
             });
         } else {
           this.finishSave();
+          this.cdr.detectChanges();
         }
       },
       error: () => {
         alert('Update failed');
         this.isProcessing = false;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -102,6 +105,7 @@ export class EventDetailsComponent implements OnInit {
     this.isProcessing = false;
     this.isEditing = false;
     this.router.navigate(['/organizer-dashboard']);
+    this.cdr.detectChanges();
   }
 
   isAlreadyRegistered(): boolean {
@@ -129,7 +133,12 @@ export class EventDetailsComponent implements OnInit {
   }
 
   publishEvent() {
-    if (!confirm('Are you sure you want to publish this event? This will make it visible to all users.')) return;
+    if (
+      !confirm(
+        'Are you sure you want to publish this event? This will make it visible to all users.',
+      )
+    )
+      return;
 
     this.isProcessing = true;
     this.eventService.publishEvent(this.event.event_id).subscribe({
@@ -142,7 +151,7 @@ export class EventDetailsComponent implements OnInit {
         console.error('Publish failed:', err);
         alert(err.error?.message || 'Failed to publish event');
         this.isProcessing = false;
-      }
+      },
     });
   }
 
