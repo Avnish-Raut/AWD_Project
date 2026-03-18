@@ -12,7 +12,8 @@ Welcome to the Smart Event Management System. This guide provides step-by-step i
 5. [Profile Management](#profile-management)
 6. [Account Deletion](#account-deletion)
 7. [Organizer Features](#organizer-features)
-8. [Troubleshooting](#troubleshooting)
+8. [Administrator Features](#administrator-features)
+9. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -82,12 +83,13 @@ If you can no longer attend an event, you should cancel your registration to fre
 
 ## Profile Management
 
-You can update your personal information to keep your account current.
+You can update your personal information and adjust your avatar to keep your account current.
 
 1. Click on your Name or Profile Image in the top navigation bar.
 2. Select **Profile Settings**.
-3. You can update your Display Name, Contact Email, and Bio.
-4. Click **Save Changes** to apply the updates.
+3. To update your avatar, click on the profile image to upload a new one, or select the option to delete your current avatar.
+4. You can also update your Display Name, Contact Email, and Bio.
+5. Click **Save Changes** to apply the updates.
 
 ![Profile Settings](./user-guide-images/profile-settings.png)
 *Figure 6: Updating personal account details*
@@ -117,19 +119,47 @@ Users with the **ORG** role have access to management tools to host their own ev
 ### Creating and Publishing
 1. Go to the Organizer Dashboard.
 2. Click **Create Event** and fill in the event details.
-3. Click **Publish** to make the event visible to the public.
+3. You can also upload event images or supplementary files.
+4. Click **Publish** to make the event visible to the public.
 
 ![Create Event](./user-guide-images/create-event.png)
 *Figure 8: The event creation form*
 
-### Editing an Event
+### Editing or Canceling an Event
 If details change after an event is created, organizers can update them:
 1. From the Organizer Dashboard, click the **Edit icon** next to the specific event.
 2. Modify the title, date, location, or description as needed.
 3. Click **Update Event** to save the changes. Registered participants will be notified of the update.
+4. If an event must be canceled entirely, select the **Cancel Event** option. All registered attendees will be notified.
 
 ![Organizer Edit View](./user-guide-images/edit-event.png)
 *Figure 9: Modifying an existing event's details*
+
+### Generating Reports
+Organizers can view lists of participants and generate detailed event turnout reports.
+1. Select the event you wish to monitor.
+2. Click on **Generate Report** to receive real-time updates and download comprehensive analytic data on user registrations.
+
+---
+
+## Administrator Features
+
+Users with the **ADMIN** role have overarching access to maintain the platform's integrity.
+
+### Dashboard & Statistics
+The Admin Dashboard provides high-level aggregate data representing active events, total user count, and platform-wide engagement.
+
+### User Management
+- View a comprehensive directory of all registered users.
+- Use the management controls to update user roles (e.g., granting someone the ORG role).
+- **Deactivate/Reactivate:** Admins can soft-delete (deactivate) or reactivate user accounts who violate platform policies.
+
+### Global Event Moderation
+- Admins can manage the full list of events (including unpublished or canceled events).
+- Inappropriate events can be manually suspended or canceled by administrators.
+
+### System Logs
+Access the **System Logs** view to retrieve paginated comprehensive audit logs categorized by `INFO`, `WARN`, and `ERROR` tags to track significant platform actions securely.
 
 ---
 
