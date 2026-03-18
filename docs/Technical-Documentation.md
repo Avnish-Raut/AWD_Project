@@ -4,7 +4,7 @@
 1. [Introduction](#1-introduction)
 2. [System Overview](#2-system-overview)
 3. [Installation Guide](#3-installation-guide)
-4. [User Guide](#4-user-guide)
+4. [User Guide](../docs/User-Guide.md)
 5. [API Documentation](#5-api-documentation)
 6. [Testing](#6-testing)
 
@@ -82,7 +82,7 @@ Follow these steps to set up the Application locally:
 
 ---
 
-## 4. User Guide
+## 4. [User Guide](../docs/User-Guide.md)
 
 ### For Attendees (USER)
 - **Registration/Login**: Sign up directly via the user portal.
