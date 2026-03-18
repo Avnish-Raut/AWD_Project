@@ -22,14 +22,24 @@ To access the system, you must have an active account.
 
 ### Registration & Login
 1. Navigate to the Landing Page.
-2. Click on Sign Up if you are a new user, or Login if you already have an account.
+2. Click on **Sign Up** if you are a new user, or **Login** if you already have an account.
 3. Enter your credentials (Email and Password).
-4. Click the Submit button.
+4. Click the **Submit** button.
 
 ![Login Screen](./user-guide-images/login.png)
 *Figure 1: The Login Interface*
 
----
+### Password Recovery (Forgot Password)
+If you have forgotten your password, you can reset it using your registered email address.
+
+1. On the Login page, click the **Forgot Password?** link.
+2. Enter your registered email address and click **Send Reset Link**.
+3. Check your email inbox for a password reset message.
+4. Click the link in the email to be redirected to the **Reset Password** page.
+5. Enter your new password, confirm it, and click **Update Password**.
+
+![Forgot Password](./user-guide-images/forgot-password.png)
+*Figure 2: The Password Recovery request form*
 
 ## User Dashboard
 
@@ -40,7 +50,7 @@ After logging in, you will land on your User Dashboard. This is your personalize
 * Notifications: Alerts about time changes or updates from organizers.
 
 ![User Dashboard](./user-guide-images/user-dashboard.png)
-*Figure 2: Overview of the User Dashboard and Statistics*
+*Figure 3: Overview of the User Dashboard and Statistics*
 
 ---
 
@@ -52,7 +62,7 @@ After logging in, you will land on your User Dashboard. This is your personalize
 4. Click **Register Now** to sign up for the event.
 
 ![Browse Events](./user-guide-images/browse-events.png)
-*Figure 3: Using filters to find and join events*
+*Figure 4: Using filters to find and join events*
 
 ---
 
@@ -66,7 +76,7 @@ If you can no longer attend an event, you should cancel your registration to fre
 4. Confirm the cancellation in the pop-up window.
 
 ![Cancel Registration](./user-guide-images/cancel-event.png)
-*Figure 4: The cancellation confirmation workflow*
+*Figure 5: The cancellation confirmation workflow*
 
 ---
 
@@ -80,7 +90,7 @@ You can update your personal information to keep your account current.
 4. Click **Save Changes** to apply the updates.
 
 ![Profile Settings](./user-guide-images/profile-settings.png)
-*Figure 5: Updating personal account details*
+*Figure 6: Updating personal account details*
 
 ---
 
@@ -94,7 +104,7 @@ If you wish to stop using the service and remove your data, you can delete your 
 4. You will be asked to enter your password to confirm that you want to permanently remove your account and all associated data.
 
 ![Account Deletion](./user-guide-images/account-deletion.png)
-*Figure 6: Locating the account deletion option in the Danger Zone*
+*Figure 7: Locating the account deletion option in the Danger Zone*
 
 > **Warning:** This action is permanent and cannot be undone.
 
@@ -110,7 +120,7 @@ Users with the **ORG** role have access to management tools to host their own ev
 3. Click **Publish** to make the event visible to the public.
 
 ![Create Event](./user-guide-images/create-event.png)
-*Figure 7: The event creation form*
+*Figure 8: The event creation form*
 
 ### Editing an Event
 If details change after an event is created, organizers can update them:
@@ -119,7 +129,7 @@ If details change after an event is created, organizers can update them:
 3. Click **Update Event** to save the changes. Registered participants will be notified of the update.
 
 ![Organizer Edit View](./user-guide-images/edit-event.png)
-*Figure 8: Modifying an existing event's details*
+*Figure 9: Modifying an existing event's details*
 
 ---
 
