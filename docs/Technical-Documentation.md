@@ -109,16 +109,46 @@ The API operates fundamentally over HTTP using standard REST paradigms. All non-
 #### Authentication (`/auth`)
 - `POST /api/auth/register` - Register a new user (Self-register available only to USER and ORG roles).
 - `POST /api/auth/login` - Authenticate with email/password and obtain a JWT token.
+- `POST /api/auth/forgot-password` - Request password reset.
+- `POST /api/auth/reset-password` - Reset password.
+- `GET /api/auth/profile` - Get authenticated user profile.
 
 #### Users (`/users`)
+- `GET /api/users/me` - Get current user profile.
+- `PATCH /api/users/me` - Update current user profile.
+- `POST /api/users/me/avatar` - Upload user avatar.
+- `DELETE /api/users/me/avatar` - Delete user avatar.
+- `DELETE /api/users/me` - Delete current user account.
 - `GET /api/users` *(ADMIN only)* - Retrieve all users with pagination and search.
+- `GET /api/users/:id` *(ADMIN only)* - Get user by ID.
 - `PATCH /api/users/:id/role` *(ADMIN only)* - Update user role mappings.
-- `PATCH /api/users/:id/deactivate` *(ADMIN only)* - Soft-delete a user.
+- `DELETE /api/users/:id` *(ADMIN only)* - Soft-delete a user.
+- `POST /api/users/:id/reactivate` *(ADMIN only)* - Reactivate a user account.
 
 #### Events (`/events`)
 - `GET /api/events` - Public access to browse published events.
 - `POST /api/events` *(ORG only)* - Publish a new event.
 - `GET /api/events/admin/list` *(ADMIN only)* - Retrieve all events (including cancelled/unpublished).
+- `GET /api/events/my/events` - Retrieve events created by the current user.
+- `GET /api/events/my/user-events` - Retrieve events the current user registered for.
+- `GET /api/events/:id` - Retrieve specific event details.
+- `POST /api/events/:id/upload` - Upload an image to an event.
+- `PATCH /api/events/:id` - Update an event.
+- `PATCH /api/events/:id/publish` - Publish a drafted event.
+- `GET /api/events/:id/participants` - Retrieve event participants.
+- `POST /api/events/:id/register` - Register for an event.
+- `DELETE /api/events/:id/cancel-registration` - Cancel registration for an event.
+- `DELETE /api/events/:id` - Cancel an event.
+
+#### Files
+- `POST /api/events/:eventId/files` - Upload files to an event.
+- `GET /api/events/:eventId/files/:fileId` - Retrieve a specific file for an event.
+
+#### Reports
+- `GET /api/reports` - Get list of reports.
+- `GET /api/reports/:id` - Get specific report details.
+- `POST /api/:id/report/generate` - Generate a report for an event.
+- `GET /api/reports/:id/progress` - Server-Sent Events (SSE) for Real-Time Progress.
 
 #### System Logs (`/logs`)
 - `GET /api/logs` *(ADMIN only)* - Retrieve paginated platform audit logs with optional severity level filters.
