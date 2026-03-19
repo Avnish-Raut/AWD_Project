@@ -1,3 +1,8 @@
+# Group 15 
+Akash Silas Nesakumar - 1751388 
+Nguyen Son Thien - 1751364 
+Avnish Jayprakash Raut - 1751366 
+
 # Smart Event Management System - Technical Documentation
 
 ## Table of Contents
