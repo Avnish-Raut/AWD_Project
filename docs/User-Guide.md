@@ -1,3 +1,8 @@
+# Group 15 
+Akash Silas Nesakumar - 1751388 
+Nguyen Son Thien - 1751364 
+Avnish Jayprakash Raut - 1751366 
+
 # User Guide: Smart Event Management System
 
 Welcome to the Smart Event Management System. This guide provides step-by-step instructions on how to navigate and use the platform effectively.
