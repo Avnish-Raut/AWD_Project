@@ -190,3 +190,9 @@ The Angular frontend extensively employs individual specs (`.spec.ts`) validatin
   # Or run tests without watch mode
   npx ng test --watch=false --browsers=ChromeHeadless
   ```
+
+
+### Test Coverage Reporting
+![Test Coverage Summary](./test-coverage.png)
+
+*Figure 1: Backend Test Coverage Snapshot*
