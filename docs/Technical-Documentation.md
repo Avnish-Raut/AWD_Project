@@ -86,7 +86,7 @@ Follow these steps to set up the Application locally:
    > The frontend will be available at `http://localhost:4200`
 
 ---
-
+### Alternative , Installation is done . Run start.sh in MainProject to run the system
 ## 4. [User Guide](../docs/User-Guide.md)
 
 ### For Attendees (USER)
