@@ -219,3 +219,4 @@ Maltrap.io for smtp mails
 
 ![Mailtrap.io](./mailtrap.jpeg)
 
+*Figure 2: Mailtrap update from application*
