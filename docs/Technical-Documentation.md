@@ -191,6 +191,20 @@ The Angular frontend extensively employs individual specs (`.spec.ts`) validatin
   npx ng test --watch=false --browsers=ChromeHeadless
   ```
 
+### Test Credentials & Environment
+
+For manual testing and verification of the frontend Role-Based Access Control (RBAC), the following accounts are seeded by default. These accounts provide a consistent baseline for testing the User, Organizer, and Admin dashboards.
+
+| Role | Username | Email | Password | Key Permissions to Test |
+| :--- | :--- | :--- | :--- | :--- |
+| **ADMIN** | `SystemAdmin` | `admin@smartevents.edu` | `Password$123` | User management, global logs, and platform statistics. |
+| **ORG** | `TechDepartment` | `tech@smartevents.edu` | `Password$123` | Event creation, editing, and participant reporting. |
+| **USER** | `Student_1` | `student1@smartevents.edu` | `Password$123` | Event browsing, registration, and profile deletion. |
+
+> **Note:** All seeded passwords utilize `bcrypt` hashing (10 rounds). To reset the testing environment to this baseline at any time, run the following command in the backend directory:
+
+```bash
+npm run seed
 
 ### Test Coverage Reporting
 ![Test Coverage Summary](./test-coverage.png)
