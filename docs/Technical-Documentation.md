@@ -207,6 +207,7 @@ For manual testing and verification of the frontend Role-Based Access Control (R
 npm run seed
 
 ### Test Coverage Reporting
+
 ![Test Coverage Summary](./test-coverage.png)
 
 *Figure 1: Backend Test Coverage Snapshot*
@@ -215,5 +216,5 @@ npm run seed
 
 Maltrap.io for smtp mails
 
-<img width="1691" height="682" alt="image" src="https://github.com/user-attachments/assets/ba5c053a-a4d3-46dc-b577-e0478e375df9" />
+![Mailtrap.io](./mailtrap.jpeg)
 
