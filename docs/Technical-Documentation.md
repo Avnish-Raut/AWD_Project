@@ -205,6 +205,7 @@ For manual testing and verification of the frontend Role-Based Access Control (R
 
 ```bash
 npm run seed
+```
 
 ### Test Coverage Reporting
 
