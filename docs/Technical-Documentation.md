@@ -38,7 +38,9 @@ The application is built on a modern, robust tech stack split into a robust back
 ---
 
 ## 3. Installation Guide
-Follow these steps to set up the Application locally:
+Installation is done inside vm. Run start.sh in Home Directory to run the system
+
+Alternative if setup is not done.Follow these steps to set up the Application locally:
 
 ### Prerequisites
 - Node.js (v18 or higher)
@@ -86,7 +88,7 @@ Follow these steps to set up the Application locally:
    > The frontend will be available at `http://localhost:4200`
 
 ---
-Alternative , Installation is done . Run start.sh in Home Directory to run the system
+
 ## 4. [User Guide](../docs/User-Guide.md)
 
 ### For Attendees (USER)
@@ -211,7 +213,7 @@ npm run seed
 
 ![Test Coverage Summary](./test-coverage.png)
 
-*Figure 1: Backend Test Coverage Snapshot*
+*Figure 1: Frontend Test Coverage Snapshot*
 
 ### External Component
 
