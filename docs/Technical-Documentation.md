@@ -210,6 +210,7 @@ npm run seed
 ```
 
 ### Test Coverage Reporting
+Coverage report present as index.html in /home/osboxes/MainProject/AWD_Project/frontend/coverage/Chrome Headless 146.0.0.0 (Linux 0.0.0)/index.html
 
 ![Test Coverage Summary](./test-coverage.png)
 
