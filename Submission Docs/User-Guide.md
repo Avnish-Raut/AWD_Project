@@ -166,20 +166,28 @@ Users with the **ADMIN** role have overarching access to maintain the platform's
 
 The Admin Dashboard provides high-level aggregate data representing active events, total user count, and platform-wide engagement.
 
+![Admin Dashboard](./user-guide-images/admin-dashboard.png)
+
 ### User Management
 
 - View a comprehensive directory of all registered users.
 - Use the management controls to update user roles (e.g., granting someone the ORG role).
 - **Deactivate/Reactivate:** Admins can soft-delete (deactivate) or reactivate user accounts who violate platform policies.
 
+![User Management](./user-guide-images/admin-userManagement.png)
+
 ### Global Event Moderation
 
 - Admins can manage the full list of events (including unpublished or canceled events).
 - Inappropriate events can be manually suspended or canceled by administrators.
 
+![Event Management](./user-guide-images/admin-eventManagement.png)
+
 ### System Logs
 
 Access the **System Logs** view to retrieve paginated comprehensive audit logs categorized by `INFO`, `WARN`, and `ERROR` tags to track significant platform actions securely.
+
+![System logs](./user-guide-images/admin-systemLogs.png)
 
 ---
 
