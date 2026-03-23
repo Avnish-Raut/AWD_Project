@@ -13,7 +13,7 @@ Project Directory : /home/MainProject/AWD_Project
 1. [Introduction](#1-introduction)
 2. [System Overview](#2-system-overview)
 3. [Installation Guide](#3-installation-guide)
-4. [User Guide](../docs/User-Guide.md)
+4. [User Guide](../Submission%20Docs/User-Guide.md)
 5. [API Documentation](#5-api-documentation)
 6. [Testing](#6-testing)
 
@@ -240,7 +240,7 @@ npm run seed
 
 Coverage report present as index.html in /home/osboxes/MainProject/AWD_Project/frontend/coverage/Chrome Headless 146.0.0.0 (Linux 0.0.0)/index.html
 
-![Test Coverage Summary](./test-coverage.png)
+![Test Coverage Summary](./user-guide-images/test-coverage.png)
 
 _Figure 1: Frontend Test Coverage Snapshot_
 
@@ -248,6 +248,6 @@ _Figure 1: Frontend Test Coverage Snapshot_
 
 Maltrap.io for smtp mails
 
-![Mailtrap.io](./mailtrap.jpeg)
+![Mailtrap.io](./user-guide-images/mailtrap.jpeg)
 
 _Figure 2: Mailtrap update from application_
